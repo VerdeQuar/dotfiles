@@ -39,7 +39,8 @@
   };
 
   sops = {
-    age.keyFile = "${config.home.homeDirectory}/.age-key.txt";
+    age.keyFile = ./key.txt;
+    age.generateKey = true;
     defaultSopsFile = ./secrets.yaml;
     secrets = {
       id_ed25519 = {
@@ -953,11 +954,11 @@
     configFile = lib.mkMerge [
       (import ./modules/joshuto.nix {inherit pkgs;})
       {
+        "sops/age/keys.txt".source = ./key.txt;
         "aniwall/config.json.initial".text = builtins.toJSON {
           set_wallpaper_command = "${pkgs.swww}/bin/swww img {} --transition-type center";
           wallpapers_dir = "${config.xdg.userDirs.pictures}/wallpapers";
         };
-        "sops/age/keys.txt".source = ./key.txt;
         "nixpkgs/config.nix".text = ''
           {
             allowUnfree = true;

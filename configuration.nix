@@ -120,6 +120,7 @@
 
   sops = {
     age.keyFile = ./key.txt;
+    age.generateKey = true;
     defaultSopsFile = ./secrets.yaml;
     secrets.user-password.neededForUsers = true;
   };
