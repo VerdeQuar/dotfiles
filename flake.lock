@@ -15,11 +15,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1702072564,
-        "narHash": "sha256-Zc31HglnPWvLaRrRVLmFdrSIZa4enes5DbEZGArLevE=",
+        "lastModified": 1702150615,
+        "narHash": "sha256-kiCGnE3Zr0e6eGPvWjzcoOwgnUUk8Dx4HKZOJNTfXic=",
         "owner": "VerdeQuar",
         "repo": "aniwall",
-        "rev": "275e94e27cebced3f6d74706e6bd4f1919e8068a",
+        "rev": "3a5dc478eba1769f863913fd751efbfe240d3765",
         "type": "github"
       },
       "original": {
