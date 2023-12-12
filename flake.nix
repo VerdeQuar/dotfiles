@@ -66,19 +66,24 @@
         cargo2nix.overlays.default
 
         (final: prev: {
-          lolcrab = prev.callPackage
+          lolcrab =
+            prev.callPackage
             (pkgs.rustBuilder.makePackageSet {
               rustVersion = "latest";
-              packageFun = import ./crates/lolcrab.nix;
+              packageFun = import ./modules/crates/lolcrab.nix;
               workspaceSrc = inputs.crate-lolcrab;
-            }).workspace.lolcrab {};
+            })
+            .workspace
+            .lolcrab {};
         })
 
         (final: prev: {
-          vimPlugins = prev.vimPlugins // {
-            codeium-nvim = codeium-nvim.packages.${system}.vimPlugins.codeium-nvim;
-            codeium-lsp = codeium-nvim.packages.${system}.codeium-lsp;
-          };
+          vimPlugins =
+            prev.vimPlugins
+            // {
+              codeium-nvim = codeium-nvim.packages.${system}.vimPlugins.codeium-nvim;
+              codeium-lsp = codeium-nvim.packages.${system}.codeium-lsp;
+            };
         })
 
         (final: prev: {
@@ -101,19 +106,14 @@
         inherit pkgs;
         specialArgs = {inherit system inputs common;};
         modules = [
-          ./configuration.nix
-          sops-nix.nixosModules.sops
-          home-manager.nixosModules.home-manager
-          {
-            home-manager.useGlobalPkgs = true;
-            home-manager.useUserPackages = true;
-            home-manager.extraSpecialArgs = {inherit system inputs common;};
-
-            home-manager.users = {
-              root = import ./users/root.nix;
-              verdek = import ./users/verdek.nix;
-            };
-          }
+          ./hosts/lapek/configuration.nix
+        ];
+      };
+      pecet = nixpkgs.lib.nixosSystem {
+        inherit pkgs;
+        specialArgs = {inherit system inputs common;};
+        modules = [
+          ./hosts/pecet/configuration.nix
         ];
       };
     };

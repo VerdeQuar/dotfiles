@@ -12,6 +12,9 @@
     inputs.sops-nix.homeManagerModules.sops
   ];
 
+  home.username = "verdek";
+  home.homeDirectory = "/home/verdek";
+
   home.stateVersion = "23.11";
   home.pointerCursor = {
     package = common.xcursor.theme.package;
@@ -24,24 +27,21 @@
   home.sessionVariables = rec {
     EDITOR = "nvim";
     SUDO_EDITOR = "${EDITOR}";
-    DIRENV_LOG_FORMAT = ''""'';
+    DIRENV_LOG_FORMAT = "";
     XDG_CACHE_HOME = "${config.xdg.cacheHome}";
     XDG_DATA_HOME = "${config.xdg.dataHome}";
     XDG_CONFIG_HOME = "${config.xdg.configHome}";
-    # XDG_DESKTOP_DIR = "${config.home.homeDirectory}/${config.xdg.userDirs.desktop}";
-    # XDG_DOCUMENTS_DIR = "${config.home.homeDirectory}/${config.xdg.userDirs.documents}";
-    # XDG_DOWNLOAD_DIR = "${config.home.homeDirectory}/${config.xdg.userDirs.download}";
-    # XDG_MUSIC_DIR = "${config.home.homeDirectory}/${config.xdg.userDirs.music}";
-    # XDG_PICTURES_DIR = "${config.home.homeDirectory}/${config.xdg.userDirs.pictures}";
-    # XDG_PUBLICSHARE_DIR = "${config.home.homeDirectory}/${config.xdg.userDirs.publicShare}";
-    # XDG_TEMPLATES_DIR = "${config.home.homeDirectory}/${config.xdg.userDirs.templates}";
-    # XDG_VIDEOS_DIR = "${config.home.homeDirectory}/${config.xdg.userDirs.videos}";
   };
 
   sops = {
-    age.keyFile = ./key.txt;
+    age.keyFile = let
+      attempt = builtins.tryEval ../sops/key.txt;
+    in
+      if attempt.success
+      then attempt.value
+      else null;
     age.generateKey = true;
-    defaultSopsFile = ./secrets.yaml;
+    defaultSopsFile = ../sops/secrets.yaml;
     secrets = {
       id_ed25519 = {
         path = "${config.home.homeDirectory}/.ssh/id_ed25519";
@@ -56,7 +56,7 @@
   };
 
   colorScheme = inputs.nix-colors.colorSchemes.catppuccin-mocha;
-  
+
   home.packages = with pkgs; [
     (rust-bin.selectLatestNightlyWith (toolchain: toolchain.default))
     rust-analyzer
@@ -83,16 +83,6 @@
     (pkgs.writeShellScriptBin "xdg-terminal-exec" ''
       exec kitty -e "$@"
     '')
-    # (pkgs.symlinkJoin {
-    #   name = "youtube-music";
-    #   paths = [stable.youtube-music];
-    #   buildInputs = [pkgs.makeWrapper];
-    #   postBuild = ''
-    #     wrapProgram $out/bin/youtube-music \
-    #       --add-flags "--enable-features=UseOzonePlatform --ozone-platform=wayland"
-    #   '';
-    # })
-    # vesktop
     (discord.override {
       withVencord = true;
     })
@@ -104,10 +94,10 @@
     steam
     (pkgs.writeShellScriptBin "nixos-update" ''
       if test $# -eq 0; then
-          if test -f $PWD/flake.nix; then
+          if test -f $PWD/home.nix; then
               flake_path=$PWD;
           else
-              flake_path="/etc/nixos";
+              flake_path="${config.home.homeDirectory}/.system";
           fi
       else
           if test $# -eq 1; then
@@ -139,13 +129,13 @@
               nix run nixpkgs\#git -- clone --depth 1 ''${input[1]} /tmp/''${input[0]};
               cd /tmp/''${input[0]};
               git reset --hard ''${input[2]};
-              sudo nix --experimental-features "nix-command flakes" run github:cargo2nix/cargo2nix -- -o -l -f ''${flake_path}/crates/''${input[0]}.nix;
+              sudo nix --experimental-features "nix-command flakes" run github:cargo2nix/cargo2nix -- -o -l -f ''${flake_path}/modules/crates/''${input[0]}.nix;
               rm -r /tmp/''${input[0]};
           done
       else
           old_revs=$(nix-flake-metadata | nix run nixpkgs\#jq -- -r '.locks | .nodes | keys[] as $k | select( $k | startswith("crate-") )| "\($k) \(.[$k] | .locked.rev)"');
           nix-flake-update;
-          
+
           echo $old_revs | while read line; do
               old_input=($line);
               input=($(nix-flake-metadata | nix run nixpkgs\#jq -- -r '.locks | .nodes | keys[] as $k | select( $k | startswith("'"''${old_input[0]}"'") ) | "\(.[$k].locked.repo) https://github.com/\(.[$k].locked.owner)/\(.[$k].locked.repo) \(.[$k].locked.rev)"'));
@@ -155,7 +145,7 @@
                   nix run nixpkgs\#git -- clone --depth 1 ''${input[1]} /tmp/''${input[0]};
                   cd /tmp/''${input[0]};
                   git reset --hard ''${input[2]};
-                  sudo nix --experimental-features "nix-command flakes" run github:cargo2nix/cargo2nix -- -o -l -f ''${flake_path}/crates/''${input[0]}.nix;
+                  sudo nix --experimental-features "nix-command flakes" run github:cargo2nix/cargo2nix -- -o -l -f ''${flake_path}/modules/crates/''${input[0]}.nix;
                   rm -r /tmp/''${input[0]};
               fi
           done
@@ -191,44 +181,71 @@
       extraPackages = with pkgs; [
         nixd
       ];
-      extraLuaConfig = ''
+      extraLuaConfig =
+        /*
+        lua
+        */
+        ''
 
-        vim.opt.number = true
-        vim.opt.relativenumber = true
-        vim.opt.wrap = false
-        vim.opt.linebreak = true
-        vim.opt.ignorecase = true
-        vim.opt.smartcase = true
-        vim.opt.shiftwidth = 4
-        vim.opt.softtabstop = 4
-        vim.opt.expandtab = true
-        vim.opt.clipboard = "unnamed,unnamedplus"
-        vim.opt.undofile = true
-        vim.opt.undodir = "${config.xdg.dataHome}/;nvim/undo"
+          vim.opt.number = true
+          vim.opt.relativenumber = true
+          vim.opt.wrap = false
+          vim.opt.linebreak = true
+          vim.opt.ignorecase = true
+          vim.opt.smartcase = true
+          vim.opt.shiftwidth = 4
+          vim.opt.softtabstop = 4
+          vim.opt.expandtab = true
+          vim.opt.clipboard = 'unnamed,unnamedplus'
+          vim.opt.undofile = true
+          vim.opt.undodir = '${config.xdg.dataHome}/nvim/undo'
 
-        vim.keymap.set('n', '<C-BS>', '<C-W>')
-      '';
+          vim.opt.listchars = {
+            eol = '⤶',
+            space = '•',
+            tab = '->',
+          }
+          vim.opt.list = true
+
+          vim.keymap.set('n', '<C-BS>', '<C-W>')
+        '';
       plugins = with pkgs.vimPlugins; [
         {
           plugin = pkgs.vimUtils.buildVimPlugin {
             pname = "dummy";
             version = "2137";
             src = "";
-            dontUnpack= true;
+            dontUnpack = true;
           };
-          config = fromLua ''
-            vim.g.mapleader = ","
-          '';
+          config =
+            fromLua
+            /*
+            lua
+            */
+            ''
+              vim.g.mapleader = ","
+            '';
         }
+        hmts-nvim
         {
           plugin = fidget-nvim;
-          config = fromLua ''
-            require('fidget').setup({})
-          '';
+          config =
+            fromLua
+            /*
+            lua
+            */
+            ''
+              require('fidget').setup({})
+            '';
         }
         {
           plugin = pkgs.nur.repos.m15a.vimExtraPlugins.smart-pairs;
-          config = fromLua "require('pairs'):setup({
+          config =
+            fromLua
+            /*
+            lua
+            */
+            "require('pairs'):setup({
             enter = {
               enable_mapping = false
             }
@@ -237,47 +254,66 @@
         nvim-lspconfig
         {
           plugin = lsp-zero-nvim;
-          config = fromLua ''
-            local lsp_zero = require('lsp-zero').preset({})
+          config =
+            fromLua
+            /*
+            lua
+            */
+            ''
+              local lsp_zero = require('lsp-zero')
 
-            lsp_zero.on_attach(function(client, bufnr)
-              -- see :help lsp-zero-keybindings
-              -- to learn the available actions
-              lsp_zero.default_keymaps({buffer = bufnr})
-            end)
+              lsp_zero.on_attach(function(client, bufnr)
+                -- see :help lsp-zero-keybindings
+                -- to learn the available actions
+                lsp_zero.default_keymaps({buffer = bufnr, preserve_mappings = false})
+                vim.keymap.set('n', 'gr', '<cmd>Telescope lsp_references<cr>', {buffer = bufnr})
+                vim.keymap.set('n', 'gd', '<cmd>Telescope lsp_definitions<cr>', {buffer = bufnr})
+                vim.keymap.set('n', 'gi', '<cmd>Telescope lsp_implementations<cr>', {buffer = bufnr})
+                vim.keymap.set('n', 'gt', '<cmd>Telescope lsp_type_definitions<cr>', {buffer = bufnr})
+              end)
 
 
-            lsp_zero.format_on_save({
-              format_opts = {
-                async = false,
-                timeout_ms = 10000,
-              },
-              servers = {
-                ['lua_ls'] = {'lua'},
-                ['tsserver'] = {'javascript', 'typescript'},
-                ['rust_analyzer'] = {'rust'},
-              }
-            })
+              lsp_zero.format_on_save({
+                format_opts = {
+                  async = false,
+                  timeout_ms = 10000,
+                },
+                servers = {
+                  ['lua_ls'] = {'lua'},
+                  ['tsserver'] = {'javascript', 'typescript'},
+                  ['rust_analyzer'] = {'rust'},
+                }
+              })
 
-            require('lsp-zero').extend_lspconfig()
+              require('lsp-zero').extend_lspconfig()
 
-            require('lspconfig').lua_ls.setup({})
-            require('lspconfig').tsserver.setup({})
-            require('lspconfig').nixd.setup({})
-          '';
+              require('lspconfig').lua_ls.setup({})
+              require('lspconfig').tsserver.setup({})
+              require('lspconfig').nixd.setup({})
+            '';
         }
         {
           plugin = luasnip;
-          config = fromLua ''
-            require('luasnip.loaders.from_vscode').lazy_load()
-            require('luasnip').config.setup({})
-          '';
+          config =
+            fromLua
+            /*
+            lua
+            */
+            ''
+              require('luasnip.loaders.from_vscode').lazy_load()
+              require('luasnip').config.setup({})
+            '';
         }
         {
           plugin = codeium-lsp;
-          config = fromLua ''
-            require('codeium').setup({})
-          '';
+          config =
+            fromLua
+            /*
+            lua
+            */
+            ''
+              require('codeium').setup({})
+            '';
         }
         lspkind-nvim
         cmp_luasnip
@@ -291,113 +327,170 @@
         codeium-nvim
         {
           plugin = nvim-cmp;
-          config = fromLua ''
-            local cmp = require('cmp')
-            local cmp_action = require('lsp-zero').cmp_action()
-            local cmp_format = require('lsp-zero').cmp_format()
-            local luasnip = require('luasnip')
-            local kind = cmp.lsp.CompletionItemKind
+          config =
+            fromLua
+            /*
+            lua
+            */
+            ''
+              local cmp = require('cmp')
+              local cmp_action = require('lsp-zero').cmp_action()
+              local cmp_format = require('lsp-zero').cmp_format()
+              local luasnip = require('luasnip')
+              local kind = cmp.lsp.CompletionItemKind
 
-            local has_words_before = function()
-              unpack = unpack or table.unpack
-              local line, col = unpack(vim.api.nvim_win_get_cursor(0))
-              return col ~= 0 and vim.api.nvim_buf_get_lines(0, line - 1, line, true)[1]:sub(col, col):match("%s") == nil
-            end
+              local has_words_before = function()
+                unpack = unpack or table.unpack
+                local line, col = unpack(vim.api.nvim_win_get_cursor(0))
+                return col ~= 0 and vim.api.nvim_buf_get_lines(0, line - 1, line, true)[1]:sub(col, col):match("%s") == nil
+              end
 
-            cmp.setup({snippet = {
-                expand = function(args)
-                  luasnip.lsp_expand(args.body)
-                end
-              },
-              sources = {
-                {name = 'nvim_lsp'},
-                {name = 'nvim_lsp_signature_help'},
-                {name = 'nvim_lua'},
-                {name = 'luasnip'},
-                {name = 'async_path'},
-                {name = 'buffer'},
-                {name = 'calc'},
-                {name = 'codeium'},
-              },
-              mapping = cmp.mapping.preset.insert({
-                -- Scroll up and down in the completion documentation
-                ['<C-u>'] = cmp.mapping.scroll_docs(-4),
-                ['<C-d>'] = cmp.mapping.scroll_docs(4),
-
-                ['<CR>'] = cmp.mapping(function(fallback)
-                  if cmp.visible() then
-                    cmp.confirm({ select = true })
-                  else
-                    fallback()
+              cmp.setup({
+                snippet = {
+                  expand = function(args)
+                    luasnip.lsp_expand(args.body)
                   end
-                end, { "i", "s" }),
+                },
+                experimental = {
+                  ghost_text = {hlgroup = "Comment"}
+                },
+                sources = {
+                  {name = 'codeium'},
+                  {name = 'luasnip'},
+                  {name = 'nvim_lsp'},
+                  {name = 'nvim_lsp_signature_help'},
+                  {name = 'nvim_lua'},
+                  {name = 'async_path'},
+                  {name = 'buffer'},
+                  {name = 'calc'},
+                },
+                mapping = cmp.mapping.preset.insert({
+                  -- Scroll up and down in the completion documentation
+                  ['<C-u>'] = cmp.mapping.scroll_docs(-4),
+                  ['<C-d>'] = cmp.mapping.scroll_docs(4),
 
-                ['<Tab>'] = cmp.mapping(function(fallback)
-                  if cmp.visible() then
-                    cmp.confirm({ select = true })
-                  elseif luasnip.expand_or_locally_jumpable() then
-                    luasnip.expand_or_jump()
-                  elseif has_words_before() then
-                    cmp.complete()
-                    if #cmp.get_entries() == 1 then
+                  ['<CR>'] = cmp.mapping(function(fallback)
+                    if cmp.visible() then
                       cmp.confirm({ select = true })
+                    else
+                      fallback()
                     end
-                  else
-                    fallback()
-                  end
-                end, { "i", "s" }),
+                  end, { "i", "s" }),
 
-                ['<S-Tab>'] = cmp.mapping(function(fallback)
-                  if luasnip.locally_jumpable(-1) then
-                    luasnip.jump(-1)
-                  else
-                    fallback()
-                  end
-                end, { "i", "s" }),
-                
-              }),
-              formatting = {
-                format = require('lspkind').cmp_format({
-                  mode = "symbol",
-                  maxwidth = 50,
-                  ellipsis_char = '...',
-                  symbol_map = { Codeium = "", }
-                })
-              },
-              preselect = 'none',
-              completion = {
-                completeopt = 'menu,menuone,noselect',
-              },
-            })
-          '';
+                  ['<Tab>'] = cmp.mapping(function(fallback)
+                    if cmp.visible() then
+                      cmp.confirm({ select = true })
+                    elseif luasnip.expand_or_locally_jumpable() then
+                      luasnip.expand_or_jump()
+                    elseif has_words_before() then
+                      cmp.complete()
+                      if #cmp.get_entries() == 1 then
+                        cmp.confirm({ select = true })
+                      end
+                    else
+                      fallback()
+                    end
+                  end, { "i", "s" }),
+
+                  ['<S-Tab>'] = cmp.mapping(function(fallback)
+                    if luasnip.locally_jumpable(-1) then
+                      luasnip.jump(-1)
+                    else
+                      fallback()
+                    end
+                  end, { "i", "s" }),
+
+                }),
+                formatting = {
+                  format = require('lspkind').cmp_format({
+                    mode = "text_symbol",
+                    maxwidth = 50,
+                    ellipsis_char = '...',
+                    symbol_map = { Codeium = "", }
+                  })
+                },
+                preselect = 'none',
+                completion = {
+                  completeopt = 'menu,menuone,noselect',
+                },
+              })
+            '';
         }
         {
           plugin = rust-tools-nvim;
-          config = fromLua ''
-            local rust_tools = require('rust-tools')
+          config =
+            fromLua
+            /*
+            lua
+            */
+            ''
+              local rust_tools = require('rust-tools')
+              local lsp_zero = require('lsp-zero')
 
-            rust_tools.setup({
-              server = {
-                on_attach = function(client, bufnr)
-                  vim.keymap.set('n', '<leader>ca', rust_tools.hover_actions.hover_actions, {buffer = bufnr})
-                end
-              }
-            })
-          '';
+
+              rust_tools.setup({
+                tools = {
+                  inlay_hints = {
+                    auto = true,
+                  }
+                },
+                server = {
+                  standalone = true,
+                  on_attach = function(client, bufnr)
+                    vim.keymap.set('n', '<leader>a', rust_tools.hover_actions.hover_actions, {buffer = bufnr})
+                    vim.keymap.set('n', '<space>', rust_tools.code_action_group.code_action_group, {buffer = bufnr})
+                  end,
+                  settings = {
+                    ['rust-analyzer'] = {
+                      inlayHints = {
+                        lifetimeElisionHints = {
+                          enable = "always",
+                        },
+                        reborrowHints = {
+                          enable = "always",
+                        },
+                      },
+                    },
+                  },
+                }
+              })
+            '';
         }
-        { 
+        {
           plugin = comment-nvim;
-          config = fromLua "require('Comment').setup()";
+          config =
+            fromLua
+            /*
+            lua
+            */
+            "require('Comment').setup()";
         }
         {
           plugin = guess-indent-nvim;
-          config = fromLua "require('guess-indent').setup({})";
+          config =
+            fromLua
+            /*
+            lua
+            */
+            "require('guess-indent').setup({})";
         }
+        telescope-ui-select-nvim
+        telescope-undo-nvim
         {
-          plugin = which-key-nvim;
-          config = fromLua "require('which-key').setup({})";
+          plugin = telescope-nvim;
+          config =
+            fromLua
+            /*
+            lua
+            */
+            ''
+              require("telescope").setup({})
+              require("telescope").load_extension("ui-select")
+              require("telescope").load_extension("undo")
+
+              vim.keymap.set("n", "<leader>u", "<cmd>Telescope undo<cr>")
+            '';
         }
-        telescope-nvim
         nvim-notify
         modicator-nvim
         neoscroll-nvim
@@ -406,64 +499,156 @@
         trouble-nvim
         {
           plugin = neo-tree-nvim;
-          config = fromLua ''
-            require('neo-tree').setup({
-            event_handlers = {
-              {
-                event = "file_opened",
-                handler = function(file_path)
-                  require("neo-tree.command").execute({ action = "close" })
-                end
-              }
-            },
-              filesystem = {
-                use_libuv_file_watcher = true,
-                follow_current_file = {
-                  enabled = true
-                },
-
-                filtered_items = {
-                  visible = true
+          config =
+            fromLua
+            /*
+            lua
+            */
+            ''
+              require('neo-tree').setup({
+              event_handlers = {
+                {
+                  event = "file_opened",
+                  handler = function(file_path)
+                    require("neo-tree.command").execute({ action = "close" })
+                  end
                 }
-              }
-            })
-            vim.keymap.set({ "n" }, "<Leader>t", "<CMD>Neotree toggle source=filesystem<CR>", { desc = "Reveal Neotree" })
-          '';
+              },
+                filesystem = {
+                  use_libuv_file_watcher = true,
+                  follow_current_file = {
+                    enabled = true
+                  },
+
+                  filtered_items = {
+                    visible = true
+                  }
+                }
+              })
+              vim.keymap.set({ "n" }, "<Leader>t", "<CMD>Neotree toggle source=filesystem<CR>", { desc = "Reveal Neotree" })
+            '';
+        }
+        {
+          plugin = indent-blankline-nvim;
+          config =
+            fromLua
+            /*
+            lua
+            */
+            ''
+              require("ibl").setup()
+            '';
         }
         {
           plugin = catppuccin-nvim;
-          config = "colorscheme catppuccin-mocha";
+          config =
+            fromLua
+            /*
+            lua
+            */
+            ''
+              vim.cmd.colorscheme "catppuccin"
+              require("catppuccin").setup({
+                flavour = "mocha",
+                integrations = {
+                  neotree = true,
+                  fidget = true,
+                  lsp_trouble = true,
+                  symbols_outline = true,
+                  which_key = true,
+                  indent_blankline = {
+                    colored_indent_levels = true,
+                  },
+                }
+              })
+            '';
         }
+        {
+          plugin = feline-nvim;
+          config =
+            fromLua
+            /*
+            lua
+            */
+            ''
+              local ctp_feline = require('catppuccin.groups.integrations.feline')
 
+              ctp_feline.setup({})
+
+              require("feline").setup({
+                  components = ctp_feline.get(),
+              })
+            '';
+        }
+        {
+          plugin = symbols-outline-nvim;
+          config =
+            fromLua
+            /*
+            lua
+            */
+            ''
+              require("symbols-outline").setup({
+                auto_preview = true,
+              })
+            '';
+        }
         # motions
         {
           plugin = nvim-surround;
-          config = fromLua ''
-            require('nvim-surround').setup({})
-          '';
+          config =
+            fromLua
+            /*
+            lua
+            */
+            ''
+              require('nvim-surround').setup({})
+            '';
         }
         nvim-treesitter-textobjects
         {
           plugin = nvim-treesitter.withAllGrammars;
-          config = fromLua ''
-            require('nvim-treesitter.configs').setup({
-              indent = {
-                enable = true
-              }
-            })
-          '';
+          config =
+            fromLua
+            /*
+            lua
+            */
+            ''
+              require('nvim-treesitter.configs').setup({
+                highlight = {
+                  enable = true
+                },
+                indent = {
+                  enable = true
+                }
+              })
+            '';
         }
         {
           plugin = flash-nvim;
-          config = fromLua ''
-            vim.keymap.set({ "n", "x" }, "s", function() require("flash").jump() end, { desc = "Flash" })
-            vim.keymap.set({ "n", "x" }, "S", function() require("flash").treesitter() end, { desc = "Flash Treesitter" })
-            vim.keymap.set({ "o" }, "f", function() require("flash").jump() end, { desc = "Flash" })
-            vim.keymap.set({ "o" }, "F", function() require("flash").treesitter() end, { desc = "Flash Treesitter" })
-            vim.keymap.set({ "o" }, "r", function() require("flash").remote() end, { desc = "Remote Flash" })
-            vim.keymap.set({ "x", "o" }, "R", function() require("flash").treesitter_search() end, { desc = "Treesitter Search" })
-            vim.keymap.set({ "c" }, "<c-s>", function() require("flash").toggle() end, { desc = "Toggle Flash Search" })
-          '';
+          config =
+            fromLua
+            /*
+            lua
+            */
+            ''
+              vim.keymap.set({ "n", "x" }, "s", function() require("flash").jump() end, { desc = "Flash" })
+              vim.keymap.set({ "n", "x" }, "S", function() require("flash").treesitter() end, { desc = "Flash Treesitter" })
+              vim.keymap.set({ "o" }, "f", function() require("flash").jump() end, { desc = "Flash" })
+              vim.keymap.set({ "o" }, "F", function() require("flash").treesitter() end, { desc = "Flash Treesitter" })
+              vim.keymap.set({ "o" }, "r", function() require("flash").remote() end, { desc = "Remote Flash" })
+              vim.keymap.set({ "x", "o" }, "R", function() require("flash").treesitter_search() end, { desc = "Treesitter Search" })
+              vim.keymap.set({ "c" }, "<c-s>", function() require("flash").toggle() end, { desc = "Toggle Flash Search" })
+            '';
+        }
+        {
+          plugin = which-key-nvim;
+          config =
+            fromLua
+            /*
+            lua
+            */
+            "require('which-key').setup({})";
         }
       ];
     };
@@ -631,26 +816,30 @@
     nushell = {
       enable = true;
 
-      configFile.text = ''
-        $env.config = {
-          shell_integration: true
-          use_kitty_protocol: true
-          edit_mode: vi
-          show_banner: false
+      configFile.text =
+        /*
+        nu
+        */
+        ''
+          $env.config = {
+            shell_integration: true
+            use_kitty_protocol: true
+            edit_mode: vi
+            show_banner: false
 
-          rm: {
-            always_trash: true
+            rm: {
+              always_trash: true
+            }
+            filesize: {
+              metric: true
+            }
+            cursor_shape: {
+              vi_insert: line
+              vi_normal: block
+            }
           }
-          filesize: {
-            metric: true
-          }
-          cursor_shape: {
-            vi_insert: line
-            vi_normal: block
-          }
-        }
-        ${(pkgs.fortune.override {withOffensive = true;})}/bin/fortune -a | ${pkgs.lolcrab}/bin/lolcrab --custom "${config.colorScheme.colors.base08}" "${config.colorScheme.colors.base09}" "${config.colorScheme.colors.base0A}" "${config.colorScheme.colors.base0B}" "${config.colorScheme.colors.base0C}" "${config.colorScheme.colors.base0D}" --scale 0.1
-      '';
+          ${(pkgs.fortune.override {withOffensive = true;})}/bin/fortune -a | ${pkgs.lolcrab}/bin/lolcrab --custom "${config.colorScheme.colors.base08}" "${config.colorScheme.colors.base09}" "${config.colorScheme.colors.base0A}" "${config.colorScheme.colors.base0B}" "${config.colorScheme.colors.base0C}" "${config.colorScheme.colors.base0D}" --scale 0.1
+        '';
       shellAliases = let
         aliases = {
           # vim = "nvim";
@@ -658,12 +847,29 @@
       in
         lib.attrsets.mapAttrs' (name: value: lib.attrsets.nameValuePair "'sudo ${name}'" ("sudo " + value)) aliases;
 
-      environmentVariables = builtins.mapAttrs (name: value: "\"${builtins.toString value}\"") config.home.sessionVariables;
+      # (pkgs.symlinkJoin {
+      #   name = "youtube-music";
+      #   paths = [stable.youtube-music];
+      #   buildInputs = [pkgs.makeWrapper];
+      #   postBuild = ''
+      #     wrapProgram $out/bin/youtube-music \
+      #       --add-flags "--enable-features=UseOzonePlatform --ozone-platform=wayland"
+      #   '';
+      # })
+      # vesktop
+      environmentVariables = builtins.mapAttrs (name: value:
+        if value != ""
+        then "\"${builtins.toString value}\""
+        else "''")
+      config.home.sessionVariables;
     };
     git = {
       enable = true;
       userName = "VerdeQuar";
       userEmail = "verdequar@gmail.com";
+      extraConfig = {
+        commit.gpgsigh = true;
+      };
       aliases = {
         c = "commit";
         p = "push origin main";
@@ -673,7 +879,7 @@
       };
     };
     waybar = lib.mkMerge [
-      (import ./modules/waybar.nix {inherit pkgs;})
+      (import ./waybar.nix {inherit pkgs;})
       {
         enable = true;
       }
@@ -813,7 +1019,7 @@
         "SUPER,mouse:272,movewindow"
         "SUPER,mouse:273,resizewindow"
       ];
-      windowrule= [
+      windowrule = [
         "workspace 1 silent,^(discord)$"
         "workspace 2 silent,^(firefox)$"
         "workspace 10,^(YouTube Music)$"
@@ -867,7 +1073,7 @@
     decrypt_codeium_key = {
       Unit = {
         Description = "decrypt codeium key";
-        After = [ "sops-nix.service" ];
+        After = ["sops-nix.service"];
       };
       Service = {
         Type = "oneshot";
@@ -880,7 +1086,7 @@
     clone-password-store = {
       Unit = {
         Description = "clone password store repo to a default location";
-        After = [ "sops-nix.service" ];
+        After = ["sops-nix.service"];
       };
       Service = {
         Type = "oneshot";
@@ -952,9 +1158,14 @@
       videos = "${config.home.homeDirectory}/videos";
     };
     configFile = lib.mkMerge [
-      (import ./modules/joshuto.nix {inherit pkgs;})
+      (import ./joshuto.nix {inherit pkgs;})
       {
-        "sops/age/keys.txt".source = ./key.txt;
+        "sops/age/keys.txt".text = let
+          attempt = builtins.tryEval (builtins.readFile ../sops/key.txt);
+        in
+          if attempt.success
+          then attempt.value
+          else "";
         "aniwall/config.json.initial".text = builtins.toJSON {
           set_wallpaper_command = "${pkgs.swww}/bin/swww img {} --transition-type center";
           wallpapers_dir = "${config.xdg.userDirs.pictures}/wallpapers";

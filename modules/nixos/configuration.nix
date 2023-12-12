@@ -7,10 +7,25 @@
   ...
 }: {
   imports = [
-    ./hardware-configuration.nix
+    inputs.sops-nix.nixosModules.sops
+    inputs.home-manager.nixosModules.home-manager
   ];
 
+  home-manager.useGlobalPkgs = true;
+  home-manager.useUserPackages = true;
+  home-manager.extraSpecialArgs = {inherit system inputs common;};
+
+  home-manager.users = {
+    verdek = import ../home-manager/home.nix;
+  };
+
   nix.settings.experimental-features = ["nix-command" "flakes"];
+  nix.optimise.automatic = true;
+  nix.gc = {
+    automatic = true;
+    dates = "weekly";
+    options = "--delete-older-than 30d";
+  };
 
   boot = {
     kernelPackages = pkgs.linuxPackages_latest;
@@ -119,9 +134,14 @@
   security.pki.certificateFiles = ["/etc/ssl/certs/ca-bundle.crt"];
 
   sops = {
-    age.keyFile = ./key.txt;
+    age.keyFile = let
+      attempt = builtins.tryEval ../sops/key.txt;
+    in
+      if attempt.success
+      then attempt.value
+      else null;
     age.generateKey = true;
-    defaultSopsFile = ./secrets.yaml;
+    defaultSopsFile = ../sops/secrets.yaml;
     secrets.user-password.neededForUsers = true;
   };
 
