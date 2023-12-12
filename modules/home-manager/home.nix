@@ -197,7 +197,7 @@
 
           vim.opt.listchars = {
             eol = '⤶',
-            space = '•',
+            trail = '•',
             tab = '->',
           }
           vim.opt.list = true
