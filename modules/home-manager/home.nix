@@ -1096,7 +1096,7 @@
       Service = {
         Type = "simple";
         ExecStart = ''
-          ${pkgs.nushell}/bin/nu -c 'try { ls -a ${config.xdg.configHome}/**/*.initial | get name | path parse | each {|path| cp -f $\"($path.parent)/($path.stem).($path.extension)\" $\"($path.parent)/($path.stem)\"}}; ${pkgs.inotify-tools}/bin/inotifywait -e create -m -r -q  ${config.xdg.configHome} | each {|i| $i | split column \" \" | each {|$j| if ($j.column3 | str trim | str ends-with \".initial\") { [$\"($j.column1)($j.column3)\"] | str trim | path parse | each {|path| try { cp $\"($path.parent)/($path.stem).($path.extension)\" $\"($path.parent)/($path.stem)\"}}}}'
+          ${pkgs.nushell}/bin/nu -c 'try { ls -a ${config.xdg.configHome}/**/*.initial | get name | path parse | each {|path| cp -f $\"($path.parent)/($path.stem).($path.extension)\" $\"($path.parent)/($path.stem)\"}}; ${pkgs.inotify-tools}/bin/inotifywait -e create -m -r -q  ${config.xdg.configHome} | each {|i| $i | split column \" \" | each {|$j| if ($j.column3 | str trim | str ends-with \".initial\") { [$\"($j.column1)($j.column3)\"] | str trim | path parse | each {|path| try { cp $\"($path.parent)/($path.stem).($path.extension)\" $\"($path.parent)/($path.stem)\"}}}}}'
         '';
       };
       Install.WantedBy = ["default.target"];
