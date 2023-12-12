@@ -1,6 +1,7 @@
 {
   config,
   pkgs,
+  lib,
   system,
   inputs,
   common,
@@ -133,13 +134,8 @@
   security.rtkit.enable = true;
   security.pki.certificateFiles = ["/etc/ssl/certs/ca-bundle.crt"];
 
-  sops = {
-    age.keyFile = let
-      attempt = builtins.tryEval ../sops/key.txt;
-    in
-      if attempt.success
-      then attempt.value
-      else null;
+  sops = lib.mkIf (builtins.pathExists ../sops/key.txt) {
+    age.keyFile = ../sops/key.txt;
     age.generateKey = true;
     defaultSopsFile = ../sops/secrets.yaml;
     secrets.user-password.neededForUsers = true;
@@ -149,7 +145,7 @@
     isNormalUser = true;
     extraGroups = ["wheel"]; # Enable ‘sudo’ for the user.
     shell = pkgs.nushell;
-    hashedPasswordFile = config.sops.secrets.user-password.path;
+    hashedPasswordFile = lib.mkIf (builtins.hasAttr "user-password" config.sops.secrets) config.sops.secrets.user-password.path;
   };
 
   environment = {

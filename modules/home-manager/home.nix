@@ -33,13 +33,8 @@
     XDG_CONFIG_HOME = "${config.xdg.configHome}";
   };
 
-  sops = {
-    age.keyFile = let
-      attempt = builtins.tryEval ../sops/key.txt;
-    in
-      if attempt.success
-      then attempt.value
-      else null;
+  sops = lib.mkIf (builtins.pathExists ../sops/key.txt) {
+    age.keyFile = ../sops/key.txt;
     age.generateKey = true;
     defaultSopsFile = ../sops/secrets.yaml;
     secrets = {
@@ -1160,12 +1155,7 @@
     configFile = lib.mkMerge [
       (import ./joshuto.nix {inherit pkgs;})
       {
-        "sops/age/keys.txt".text = let
-          attempt = builtins.tryEval (builtins.readFile ../sops/key.txt);
-        in
-          if attempt.success
-          then attempt.value
-          else "";
+        "sops/age/keys.txt" = lib.mkIf (builtins.pathExists ../sops/key.txt) {source = ../sops/key.txt;};
         "aniwall/config.json.initial".text = builtins.toJSON {
           set_wallpaper_command = "${pkgs.swww}/bin/swww img {} --transition-type center";
           wallpapers_dir = "${config.xdg.userDirs.pictures}/wallpapers";
