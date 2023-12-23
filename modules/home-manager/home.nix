@@ -734,7 +734,10 @@
           "browser.download.dir" = "/home/${config.home.username}/downloads";
           "browser.toolbars.bookmarks.visibility" = "always";
           "browser.startup.page" = 3;
+          "general.autoScroll" = true;
           "layout.css.prefers-color-scheme.content-override" = 0;
+          "widget.non-native-theme.scrollbar.style" = 5;
+          "signon.rememberSignons" = false;
         };
         extensions = with pkgs.nur.repos.rycee.firefox-addons; [
           firefox-color
