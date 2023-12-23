@@ -27,10 +27,13 @@
   home.sessionVariables = rec {
     EDITOR = "nvim";
     SUDO_EDITOR = "${EDITOR}";
+    PAGER = "${pkgs.moar}/bin/moar -quit-if-one-screen";
+    BAT_PAGER = "${PAGER}";
     DIRENV_LOG_FORMAT = "";
     XDG_CACHE_HOME = "${config.xdg.cacheHome}";
     XDG_DATA_HOME = "${config.xdg.dataHome}";
     XDG_CONFIG_HOME = "${config.xdg.configHome}";
+    BAT_THEME = "catppuccin";
   };
 
   sops = lib.mkIf (builtins.pathExists ../sops/key.txt) {
@@ -61,6 +64,7 @@
     comma
     nurl
     wget
+    moar
     wl-clipboard
     xorg.xsetroot
     (pkgs.nerdfonts.override {fonts = ["CascadiaCode" "VictorMono" "Noto"];})
@@ -157,6 +161,19 @@
   };
 
   programs = {
+    bat = {
+      enable = true;
+      themes = {
+        catppuccin = {
+          src = inputs.catppuccin-bat;
+          file = "Catppuccin-mocha.tmTheme";
+        };
+      };
+      config = {
+        pager = "less -FR";
+        theme = "Catppuccin-mocha";
+      };
+    };
     bacon = {
       enable = true;
       settings = {};
@@ -838,6 +855,7 @@
       shellAliases = let
         aliases = {
           # vim = "nvim";
+          cat = "${pkgs.bat}/bin/bat";
         };
       in
         lib.attrsets.mapAttrs' (name: value: lib.attrsets.nameValuePair "'sudo ${name}'" ("sudo " + value)) aliases;
@@ -862,6 +880,29 @@
       enable = true;
       userName = "VerdeQuar";
       userEmail = "verdequar@gmail.com";
+      delta = {
+        enable = true;
+        options = {
+          catppuccin = {
+            dark = true;
+            line-numbers = true;
+            side-by-side = true;
+            syntax-theme = "catppuccin";
+            plus-style = ''syntax "#384D35"'';
+            minus-style = ''syntax "#764351"'';
+            plus-emph-style = ''syntax "#395426"'';
+            minus-emph-style = ''syntax "#9C393A"'';
+            line-numbers-plus-style = ''"#395426" bold'';
+            line-numbers-minus-style = ''"#9C393A" bold'';
+            map-styles = ''bold purple => syntax "#62517A", bold blue => syntax "#435A7D", bold cyan => syntax "#314C46", bold yellow => syntax "#635844"'';
+            zero-style = ''syntax'';
+            whitespace-error-style = ''"#${config.colorScheme.colors.base05}"'';
+          };
+
+          features = "catppuccin";
+          whitespace-error-style = "22 reverse";
+        };
+      };
       extraConfig = {
         commit.gpgsigh = true;
       };

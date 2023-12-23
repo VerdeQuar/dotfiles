@@ -29,6 +29,11 @@
       flake = false;
     };
 
+    catppuccin-bat = {
+      url = "github:catppuccin/bat";
+      flake = false;
+    };
+
     crate-lolcrab = {
       url = "github:mazznoer/lolcrab";
       flake = false;
