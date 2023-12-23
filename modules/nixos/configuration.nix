@@ -14,11 +14,8 @@
 
   home-manager.useGlobalPkgs = true;
   home-manager.useUserPackages = true;
-  home-manager.extraSpecialArgs = {inherit system inputs common;};
 
-  home-manager.users = {
-    verdek = import ../home-manager/home.nix;
-  };
+  home-manager.extraSpecialArgs = {inherit system inputs common;};
 
   nix.settings.experimental-features = ["nix-command" "flakes"];
   nix.optimise.automatic = true;
@@ -55,7 +52,6 @@
 
   networking = {
     firewall.enable = false;
-    hostName = "lapek";
     networkmanager.enable = true;
   };
 

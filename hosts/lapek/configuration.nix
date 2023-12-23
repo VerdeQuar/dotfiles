@@ -4,6 +4,10 @@
     ../../modules/nixos/configuration.nix
   ];
 
+  home-manager.users = {
+    verdek = import ./home.nix;
+  };
+
   # Enable OpenGL
   hardware.opengl = {
     enable = true;
@@ -13,6 +17,8 @@
 
   # Load nvidia driver for Xorg and Wayland
   services.xserver.videoDrivers = ["nvidia"];
+
+  networking.hostName = "lapek";
 
   hardware.nvidia = {
     prime = {

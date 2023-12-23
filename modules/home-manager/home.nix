@@ -1041,7 +1041,6 @@
 
         "SUPERSHIFT,right,movetoworkspace,+1"
         "SUPERSHIFT,left,movetoworkspace,-1"
-        "Control, Tab, exec, rofi -show drun"
       ];
       bindl = [
         ",switch:on:Lid Switch,exec,hyprctl keyword monitor 'eDP-1${config.wayland.windowManager.hyprland.settings.monitor}'"
