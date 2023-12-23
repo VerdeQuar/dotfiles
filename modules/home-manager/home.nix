@@ -35,6 +35,7 @@
     XDG_CACHE_HOME = "${config.xdg.cacheHome}";
     XDG_DATA_HOME = "${config.xdg.dataHome}";
     XDG_CONFIG_HOME = "${config.xdg.configHome}";
+    SSH_AUTH_SOCK = "/run/user/1000/ssh-agent";
     BAT_THEME = "catppuccin";
   };
 
@@ -907,6 +908,9 @@
       };
       extraConfig = {
         commit.gpgsigh = true;
+        push = {autoSetupRemote = true;};
+        diff = {colorMoved = "default";};
+        credential.helper = "${pkgs.git.override {withLibsecret = true;}}/bin/git-credential-libsecret";
       };
       aliases = {
         c = "commit";
