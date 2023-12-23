@@ -856,7 +856,7 @@
               vi_normal: block
             }
           }
-          ${(pkgs.fortune.override {withOffensive = true;})}/bin/fortune -a | ${pkgs.lolcrab}/bin/lolcrab --custom "${config.colorScheme.colors.base08}" "${config.colorScheme.colors.base09}" "${config.colorScheme.colors.base0A}" "${config.colorScheme.colors.base0B}" "${config.colorScheme.colors.base0C}" "${config.colorScheme.colors.base0D}" --scale 0.1
+          ${pkgs.coreutils}/bin/cat ${../quotes.dat} | split row % | shuffle | get 1 | ${pkgs.lolcrab}/bin/lolcrab --custom "${config.colorScheme.colors.base08}" "${config.colorScheme.colors.base09}" "${config.colorScheme.colors.base0A}" "${config.colorScheme.colors.base0B}" "${config.colorScheme.colors.base0C}" "${config.colorScheme.colors.base0D}" --scale 0.1
         '';
       shellAliases = let
         aliases = {
