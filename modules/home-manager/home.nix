@@ -1060,7 +1060,6 @@
         "workspace 2 silent,^(firefox)$"
         "workspace 10,^(YouTube Music)$"
       ];
-      monitor = ",highres,auto,1.25";
       xwayland.force_zero_scaling = true;
       input = {
         kb_layout = "pl";
