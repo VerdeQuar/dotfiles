@@ -1161,6 +1161,17 @@
     };
   };
   services = {
+    gammastep = {
+      enable = true;
+      provider = "manual";
+      latitude = "51.9194";
+      longitude = "19.1451";
+      tray = true;
+      temperature = {
+        day = 5500;
+        night = 3500;
+      };
+    };
     volnoti.enable = true;
     mako = {
       enable = true;
