@@ -11,6 +11,7 @@
     inputs.nix-colors.homeManagerModules.default
     inputs.sops-nix.homeManagerModules.sops
     ./joshuto.nix
+    ./eww.nix
   ];
 
   home.username = "verdek";
@@ -915,12 +916,6 @@
         co = "checkout";
       };
     };
-    waybar = lib.mkMerge [
-      (import ./waybar.nix {inherit pkgs;})
-      {
-        enable = true;
-      }
-    ];
     rofi = {
       enable = true;
       package = pkgs.rofi-wayland;
@@ -1001,7 +996,6 @@
         "hyprctl setcursor ${common.xcursor.theme.name} ${toString common.xcursor.theme.size}"
         ''${pkgs.xorg.xsetroot}/bin/xsetroot -xcf ${common.xcursor.theme.package}/share/icons/${common.xcursor.theme.name}/cursors/left_ptr ${toString common.xcursor.theme.size}''
         "${pkgs.swww}/bin/swww init"
-        "waybar"
         "hyprctl dispatch workspace 3"
         "discord"
         "firefox"
