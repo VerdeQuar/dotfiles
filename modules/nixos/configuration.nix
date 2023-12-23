@@ -130,6 +130,11 @@
   security.rtkit.enable = true;
   security.pki.certificateFiles = ["/etc/ssl/certs/ca-bundle.crt"];
 
+  security.sudo.extraConfig = ''
+    Defaults !tty_tickets
+    Defaults timestamp_timeout=-1
+  '';
+
   sops = lib.mkIf (builtins.pathExists ../sops/key.txt) {
     age.keyFile = ../sops/key.txt;
     age.generateKey = true;
