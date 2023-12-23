@@ -1044,10 +1044,6 @@
         "SUPERSHIFT,right,movetoworkspace,+1"
         "SUPERSHIFT,left,movetoworkspace,-1"
       ];
-      bindl = [
-        ",switch:on:Lid Switch,exec,hyprctl keyword monitor 'eDP-1${config.wayland.windowManager.hyprland.settings.monitor}'"
-        ",switch:off:Lid Switch,exec,hyprctl keyword monitor 'eDP-1, disable'"
-      ];
       bindeli = [
         ", XF86AudioRaiseVolume, exec, wpctl set-volume -l 1.5 @DEFAULT_AUDIO_SINK@ 5%+"
         ", XF86AudioLowerVolume, exec, wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-"
