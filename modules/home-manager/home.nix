@@ -1103,7 +1103,20 @@
   };
 
   systemd.user.services = {
-    decrypt_codeium_key = {
+    scan-known-hosts = {
+      Unit = {
+        Description = "scan known hosts";
+        After = ["sops-nix.service"];
+      };
+      Service = {
+        Type = "oneshot";
+        ExecStart = ''
+          ${pkgs.nushell}/bin/nu -c "if (not ('${config.home.homeDirectory}/.ssh/known_hosts' | path exists)) or (not (${pkgs.coreutils}/bin/cat ${config.home.homeDirectory}/.ssh/known_hosts | str contains 'github.com ssh-ed25519')) { ${pkgs.openssh}/bin/ssh-keyscan -t ed25519 github.com | save -a ${config.home.homeDirectory}/.ssh/known_hosts;}"
+        '';
+      };
+      Install.WantedBy = ["default.target"];
+    };
+    decrypt-codeium-key = {
       Unit = {
         Description = "decrypt codeium key";
         After = ["sops-nix.service"];
@@ -1119,7 +1132,10 @@
     clone-password-store = {
       Unit = {
         Description = "clone password store repo to a default location";
-        After = ["sops-nix.service"];
+        After = [
+          "sops-nix.service"
+          "scan-known-hosts.service"
+        ];
       };
       Service = {
         Type = "oneshot";
