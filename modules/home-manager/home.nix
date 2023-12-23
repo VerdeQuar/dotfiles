@@ -10,6 +10,7 @@
   imports = [
     inputs.nix-colors.homeManagerModules.default
     inputs.sops-nix.homeManagerModules.sops
+    ./joshuto.nix
   ];
 
   home.username = "verdek";
@@ -1191,283 +1192,280 @@
       templates = "${config.home.homeDirectory}/templates";
       videos = "${config.home.homeDirectory}/videos";
     };
-    configFile = lib.mkMerge [
-      (import ./joshuto.nix {inherit pkgs;})
-      {
-        "sops/age/keys.txt" = lib.mkIf (builtins.pathExists ../sops/key.txt) {source = ../sops/key.txt;};
-        "aniwall/config.json.initial".text = builtins.toJSON {
-          set_wallpaper_command = "${pkgs.swww}/bin/swww img {} --transition-type center";
-          wallpapers_dir = "${config.xdg.userDirs.pictures}/wallpapers";
-        };
-        "nixpkgs/config.nix".text = ''
-          {
-            allowUnfree = true;
-          }
-        '';
-        "YouTube Music/config.json.initial".text = builtins.toJSON {
-          __internal__ = {migrations = {version = "1.20.0";};};
-          options = {
-            appVisible = true;
-            autoResetAppCache = false;
-            autoUpdates = true;
-            disableHardwareAcceleration = false;
-            hideMenu = false;
-            proxy = "";
-            restartOnConfigChanges = false;
-            resumeOnStart = true;
-            startAtLogin = false;
-            startingPage = "";
-            tray = false;
-            trayClickPlayPause = false;
-            themes = [
-              (inputs.catppuccin-youtubemusic + "/src/mocha.css")
-            ];
-          };
-          plugins = {
-            adblocker = {
-              additionalBlockLists = [];
-              cache = true;
-              enabled = true;
-            };
-            captions-selector = {
-              disableCaptions = false;
-              enabled = true;
-            };
-            crossfade = {
-              enabled = false;
-              fadeInDuration = 1500;
-              fadeOutDuration = 5000;
-              fadeScaling = "linear";
-              secondsBeforeEnd = 10;
-            };
-            discord = {
-              activityTimoutEnabled = true;
-              activityTimoutTime = 600000;
-              autoReconnect = true;
-              enabled = true;
-              hideDurationLeft = false;
-              listenAlong = true;
-            };
-            downloader = {
-              enabled = false;
-              ffmpegArgs = [];
-              preset = "mp3";
-            };
-            last-fm = {
-              api_key = "04d76faaac8726e60988e14c105d421a";
-              api_root = "http://ws.audioscrobbler.com/2.0/";
-              enabled = false;
-              secret = "a5d2a36fdf64819290f6982481eaffa2";
-            };
-            navigation = {enabled = true;};
-            notifications = {
-              enabled = true;
-              hideButtonText = false;
-              interactive = true;
-              refreshOnPlayPause = false;
-              toastStyle = 1;
-              trayControls = true;
-              unpauseNotification = true;
-              urgency = "normal";
-            };
-            picture-in-picture = {
-              alwaysOnTop = true;
-              enabled = false;
-              hotkey = "P";
-              savePosition = true;
-              saveSize = false;
-            };
-            precise-volume = {
-              arrowsShortcut = true;
-              enabled = false;
-              globalShortcuts = {
-                volumeDown = "";
-                volumeUp = "";
-              };
-              steps = 1;
-            };
-            shortcuts = {
-              enabled = false;
-              overrideMediaKeys = false;
-            };
-            skip-silences = {onlySkipBeginning = false;};
-            sponsorblock = {
-              apiURL = "https://sponsor.ajay.app";
-              categories = ["sponsor" "intro" "outro" "interaction" "selfpromo" "music_offtopic"];
-              enabled = false;
-            };
-            video-toggle = {
-              enabled = true;
-              forceHide = false;
-              mode = "custom";
-            };
-            visualizer = {
-              butterchurn = {
-                blendTimeInSeconds = 2.7;
-                preset = "martin [shadow harlequins shape code] - fata morgana";
-                renderingFrequencyInMs = 500;
-              };
-              enabled = false;
-              type = "butterchurn";
-              vudio = {
-                accuracy = 128;
-                effect = "lighting";
-                lighting = {
-                  color = "#49f3f7";
-                  dottify = true;
-                  fadeSide = true;
-                  horizontalAlign = "center";
-                  lineWidth = 1;
-                  maxHeight = 160;
-                  maxSize = 12;
-                  prettify = false;
-                  shadowBlur = 2;
-                  shadowColor = "rgba(244,244,244,.5)";
-                  verticalAlign = "middle";
-                };
-              };
-              wave = {
-                animations = [
-                  {
-                    config = {
-                      bottom = true;
-                      count = 30;
-                      cubeHeight = 5;
-                      fillColor = {gradient = ["#FAD961" "#F76B1C"];};
-                      lineColor = "rgba(0,0,0,0)";
-                      radius = 20;
-                    };
-                    type = "Cubes";
-                  }
-                  {
-                    config = {
-                      count = 12;
-                      cubeHeight = 5;
-                      fillColor = {gradient = ["#FAD961" "#F76B1C"];};
-                      lineColor = "rgba(0,0,0,0)";
-                      radius = 10;
-                      top = true;
-                    };
-                    type = "Cubes";
-                  }
-                  {
-                    config = {
-                      count = 10;
-                      diameter = 20;
-                      frequencyBand = "base";
-                      lineColor = {
-                        gradient = ["#FAD961" "#FAD961" "#F76B1C"];
-                        rotate = 90;
-                      };
-                      lineWidth = 4;
-                    };
-                    type = "Circles";
-                  }
-                ];
-              };
-            };
-            "lyrics-genius" = {
-              enabled = true;
-              romanizedLyrics = true;
-            };
-            "no-google-login" = {
-              enabled = true;
-            };
-          };
-          url = "https://music.youtube.com";
-          window-maximized = false;
-          window-position = {
-            x = 0;
-            y = 0;
-          };
-          window-size = {
-            height = 840;
-            width = 749;
-          };
-        };
-        # "VencordDesktop/VencordDesktop/settings.json.initial".text = builtins.toJSON {
-        #   splashTheming = true;
-        #   firstLaunch = false;
-        #   minimizeToTray = "on";
-        #   discordBranch = "stable";
-        #   arRPC = "on";
-        # };
-        # "VencordDesktop/VencordDesktop/settings/settings.json".text = builtins.toJSON {
-        "Vencord/settings/settings.json.initial".text = builtins.toJSON {
-          themeLinks = [
-            "https://catppuccin.github.io/discord/dist/catppuccin-mocha.theme.css"
+    configFile = {
+      "sops/age/keys.txt" = lib.mkIf (builtins.pathExists ../sops/key.txt) {source = ../sops/key.txt;};
+      "aniwall/config.json.initial".text = builtins.toJSON {
+        set_wallpaper_command = "${pkgs.swww}/bin/swww img {} --transition-type center";
+        wallpapers_dir = "${config.xdg.userDirs.pictures}/wallpapers";
+      };
+      "nixpkgs/config.nix".text = ''
+        {
+          allowUnfree = true;
+        }
+      '';
+      "YouTube Music/config.json.initial".text = builtins.toJSON {
+        __internal__ = {migrations = {version = "1.20.0";};};
+        options = {
+          appVisible = true;
+          autoResetAppCache = false;
+          autoUpdates = true;
+          disableHardwareAcceleration = false;
+          hideMenu = false;
+          proxy = "";
+          restartOnConfigChanges = false;
+          resumeOnStart = true;
+          startAtLogin = false;
+          startingPage = "";
+          tray = false;
+          trayClickPlayPause = false;
+          themes = [
+            (inputs.catppuccin-youtubemusic + "/src/mocha.css")
           ];
-          plugins = {
-            AlwaysAnimate.enabled = true;
-            AnonymiseFileNames.enabled = true;
-            BetterUploadButton.enabled = true;
-            CallTimer.enabled = true;
-            ClearURLs.enabled = true;
-            CrashHandler.enabled = true;
-            DisableDMCallIdle.enabled = true;
-            FakeNitro.enabled = true;
-            FavoriteEmojiFirst.enabled = true;
-            FavoriteGifSearch.enabled = true;
-            FixSpotifyEmbeds.enabled = true;
-            GifPaste.enabled = true;
-            ImageZoom.enabled = true;
-            MemberCount.enabled = true;
-            MessageLinkEmbeds.enabled = true;
-            MessageLogger.enabled = true;
-            MoreCommands.enabled = true;
-            NoF1.enabled = true;
-            NoUnblockToJump.enabled = true;
-            NormalizeMessageLinks.enabled = true;
-            OnePingPerDM.enabled = true;
-            OpenInApp.enabled = true;
-            PermissionsViewer.enabled = true;
-            ReverseImageSearch.enabled = true;
-            RoleColorEverywhere.enabled = true;
-            SendTimestamps.enabled = true;
-            ServerProfile.enabled = true;
-            ShowMeYourName.enabled = true;
-            StartupTimings.enabled = true;
-            TypingIndicator.enabled = true;
-            TypingTweaks.enabled = true;
-            Unindent.enabled = true;
-            ValidUser.enabled = true;
-            ViewRaw.enabled = true;
-            VoiceMessages.enabled = true;
-            VolumeBooster.enabled = true;
-            WhoReacted.enabled = true;
+        };
+        plugins = {
+          adblocker = {
+            additionalBlockLists = [];
+            cache = true;
+            enabled = true;
+          };
+          captions-selector = {
+            disableCaptions = false;
+            enabled = true;
+          };
+          crossfade = {
+            enabled = false;
+            fadeInDuration = 1500;
+            fadeOutDuration = 5000;
+            fadeScaling = "linear";
+            secondsBeforeEnd = 10;
+          };
+          discord = {
+            activityTimoutEnabled = true;
+            activityTimoutTime = 600000;
+            autoReconnect = true;
+            enabled = true;
+            hideDurationLeft = false;
+            listenAlong = true;
+          };
+          downloader = {
+            enabled = false;
+            ffmpegArgs = [];
+            preset = "mp3";
+          };
+          last-fm = {
+            api_key = "04d76faaac8726e60988e14c105d421a";
+            api_root = "http://ws.audioscrobbler.com/2.0/";
+            enabled = false;
+            secret = "a5d2a36fdf64819290f6982481eaffa2";
+          };
+          navigation = {enabled = true;};
+          notifications = {
+            enabled = true;
+            hideButtonText = false;
+            interactive = true;
+            refreshOnPlayPause = false;
+            toastStyle = 1;
+            trayControls = true;
+            unpauseNotification = true;
+            urgency = "normal";
+          };
+          picture-in-picture = {
+            alwaysOnTop = true;
+            enabled = false;
+            hotkey = "P";
+            savePosition = true;
+            saveSize = false;
+          };
+          precise-volume = {
+            arrowsShortcut = true;
+            enabled = false;
+            globalShortcuts = {
+              volumeDown = "";
+              volumeUp = "";
+            };
+            steps = 1;
+          };
+          shortcuts = {
+            enabled = false;
+            overrideMediaKeys = false;
+          };
+          skip-silences = {onlySkipBeginning = false;};
+          sponsorblock = {
+            apiURL = "https://sponsor.ajay.app";
+            categories = ["sponsor" "intro" "outro" "interaction" "selfpromo" "music_offtopic"];
+            enabled = false;
+          };
+          video-toggle = {
+            enabled = true;
+            forceHide = false;
+            mode = "custom";
+          };
+          visualizer = {
+            butterchurn = {
+              blendTimeInSeconds = 2.7;
+              preset = "martin [shadow harlequins shape code] - fata morgana";
+              renderingFrequencyInMs = 500;
+            };
+            enabled = false;
+            type = "butterchurn";
+            vudio = {
+              accuracy = 128;
+              effect = "lighting";
+              lighting = {
+                color = "#49f3f7";
+                dottify = true;
+                fadeSide = true;
+                horizontalAlign = "center";
+                lineWidth = 1;
+                maxHeight = 160;
+                maxSize = 12;
+                prettify = false;
+                shadowBlur = 2;
+                shadowColor = "rgba(244,244,244,.5)";
+                verticalAlign = "middle";
+              };
+            };
+            wave = {
+              animations = [
+                {
+                  config = {
+                    bottom = true;
+                    count = 30;
+                    cubeHeight = 5;
+                    fillColor = {gradient = ["#FAD961" "#F76B1C"];};
+                    lineColor = "rgba(0,0,0,0)";
+                    radius = 20;
+                  };
+                  type = "Cubes";
+                }
+                {
+                  config = {
+                    count = 12;
+                    cubeHeight = 5;
+                    fillColor = {gradient = ["#FAD961" "#F76B1C"];};
+                    lineColor = "rgba(0,0,0,0)";
+                    radius = 10;
+                    top = true;
+                  };
+                  type = "Cubes";
+                }
+                {
+                  config = {
+                    count = 10;
+                    diameter = 20;
+                    frequencyBand = "base";
+                    lineColor = {
+                      gradient = ["#FAD961" "#FAD961" "#F76B1C"];
+                      rotate = 90;
+                    };
+                    lineWidth = 4;
+                  };
+                  type = "Circles";
+                }
+              ];
+            };
+          };
+          "lyrics-genius" = {
+            enabled = true;
+            romanizedLyrics = true;
+          };
+          "no-google-login" = {
+            enabled = true;
           };
         };
-        "fontconfig/fonts.conf".text = ''
-          <?xml version="1.0"?>
-          <!DOCTYPE fontconfig SYSTEM "urn:fontconfig:fonts.dtd">
-          <fontconfig>
-            <!-- Fallback fonts preference order -->
-            <alias>
-              <family>sans-serif</family>
-              <prefer>
-                <family>Noto Sans</family>
-              </prefer>
-            </alias>
-            <alias>
-              <family>serif</family>
-              <prefer>
-                <family>Noto Serif</family>
-              </prefer>
-            </alias>
-            <alias>
-              <family>monospace</family>
-              <prefer>
-                <family>CaskaydiaCove Nerd Font</family>
-              </prefer>
-            </alias>
-          </fontconfig>
-        '';
-        "discord/settings.json".text = ''{ "DANGEROUS_ENABLE_DEVTOOLS_ONLY_ENABLE_IF_YOU_KNOW_WHAT_YOURE_DOING": true, "SKIP_HOST_UPDATE": true }'';
-        "qBittorrent/qBittorrent.conf".text = ''
-          [BitTorrent]
-          Session\GlobalMaxSeedingMinutes=0
-        '';
-      }
-    ];
+        url = "https://music.youtube.com";
+        window-maximized = false;
+        window-position = {
+          x = 0;
+          y = 0;
+        };
+        window-size = {
+          height = 840;
+          width = 749;
+        };
+      };
+      # "VencordDesktop/VencordDesktop/settings.json.initial".text = builtins.toJSON {
+      #   splashTheming = true;
+      #   firstLaunch = false;
+      #   minimizeToTray = "on";
+      #   discordBranch = "stable";
+      #   arRPC = "on";
+      # };
+      # "VencordDesktop/VencordDesktop/settings/settings.json".text = builtins.toJSON {
+      "Vencord/settings/settings.json.initial".text = builtins.toJSON {
+        themeLinks = [
+          "https://catppuccin.github.io/discord/dist/catppuccin-mocha.theme.css"
+        ];
+        plugins = {
+          AlwaysAnimate.enabled = true;
+          AnonymiseFileNames.enabled = true;
+          BetterUploadButton.enabled = true;
+          CallTimer.enabled = true;
+          ClearURLs.enabled = true;
+          CrashHandler.enabled = true;
+          DisableDMCallIdle.enabled = true;
+          FakeNitro.enabled = true;
+          FavoriteEmojiFirst.enabled = true;
+          FavoriteGifSearch.enabled = true;
+          FixSpotifyEmbeds.enabled = true;
+          GifPaste.enabled = true;
+          ImageZoom.enabled = true;
+          MemberCount.enabled = true;
+          MessageLinkEmbeds.enabled = true;
+          MessageLogger.enabled = true;
+          MoreCommands.enabled = true;
+          NoF1.enabled = true;
+          NoUnblockToJump.enabled = true;
+          NormalizeMessageLinks.enabled = true;
+          OnePingPerDM.enabled = true;
+          OpenInApp.enabled = true;
+          PermissionsViewer.enabled = true;
+          ReverseImageSearch.enabled = true;
+          RoleColorEverywhere.enabled = true;
+          SendTimestamps.enabled = true;
+          ServerProfile.enabled = true;
+          ShowMeYourName.enabled = true;
+          StartupTimings.enabled = true;
+          TypingIndicator.enabled = true;
+          TypingTweaks.enabled = true;
+          Unindent.enabled = true;
+          ValidUser.enabled = true;
+          ViewRaw.enabled = true;
+          VoiceMessages.enabled = true;
+          VolumeBooster.enabled = true;
+          WhoReacted.enabled = true;
+        };
+      };
+      "fontconfig/fonts.conf".text = ''
+        <?xml version="1.0"?>
+        <!DOCTYPE fontconfig SYSTEM "urn:fontconfig:fonts.dtd">
+        <fontconfig>
+          <!-- Fallback fonts preference order -->
+          <alias>
+            <family>sans-serif</family>
+            <prefer>
+              <family>Noto Sans</family>
+            </prefer>
+          </alias>
+          <alias>
+            <family>serif</family>
+            <prefer>
+              <family>Noto Serif</family>
+            </prefer>
+          </alias>
+          <alias>
+            <family>monospace</family>
+            <prefer>
+              <family>CaskaydiaCove Nerd Font</family>
+            </prefer>
+          </alias>
+        </fontconfig>
+      '';
+      "discord/settings.json".text = ''{ "DANGEROUS_ENABLE_DEVTOOLS_ONLY_ENABLE_IF_YOU_KNOW_WHAT_YOURE_DOING": true, "SKIP_HOST_UPDATE": true }'';
+      "qBittorrent/qBittorrent.conf".text = ''
+        [BitTorrent]
+        Session\GlobalMaxSeedingMinutes=0
+      '';
+    };
   };
 }
