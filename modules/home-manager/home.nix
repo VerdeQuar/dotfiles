@@ -1008,8 +1008,8 @@
         "firefox"
       ];
       bind = [
-        "CONTROL, space, exec, kitty"
         "SUPER, Q, killactive, "
+        "CONTROL, space, exec, kitty"
         "SUPER SHIFT, F, togglefloating, "
         "SUPER, F, fullscreen, "
         '', Print, exec, ${pkgs.dash}/bin/dash -c "${pkgs.grim}/bin/grim -g '$(${pkgs.slurp}/bin/slurp)' - | ${pkgs.wl-clipboard}/bin/wl-copy"''

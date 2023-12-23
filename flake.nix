@@ -69,7 +69,6 @@
         })
         nurpkgs.overlay
         cargo2nix.overlays.default
-
         (final: prev: {
           lolcrab =
             prev.callPackage
