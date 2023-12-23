@@ -1139,8 +1139,9 @@
       };
       Service = {
         Type = "oneshot";
+        Environment = "PATH=${lib.makeBinPath [pkgs.openssh]}";
         ExecStart = ''
-          ${pkgs.nushell}/bin/nu -c 'try { git clone git@github.com:VerdeQuar/pwd-store.git "${config.programs.password-store.settings.PASSWORD_STORE_DIR}" }'
+          ${pkgs.nushell}/bin/nu -c 'try { ${pkgs.git}/bin/git clone git@github.com:VerdeQuar/pwd-store.git "${config.programs.password-store.settings.PASSWORD_STORE_DIR}" }'
         '';
       };
       Install.WantedBy = ["default.target"];
