@@ -1002,7 +1002,8 @@
       exec-once = [
         "hyprctl setcursor ${common.xcursor.theme.name} ${toString common.xcursor.theme.size}"
         ''${pkgs.xorg.xsetroot}/bin/xsetroot -xcf ${common.xcursor.theme.package}/share/icons/${common.xcursor.theme.name}/cursors/left_ptr ${toString common.xcursor.theme.size}''
-        "${pkgs.swww}/bin/swww init"
+        "${pkgs.swww}/bin/swww-daemon"
+        "waybar"
         "hyprctl dispatch workspace 3"
         "discord"
         "firefox"
