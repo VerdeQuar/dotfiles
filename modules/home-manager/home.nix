@@ -112,14 +112,14 @@
       function nix-flake-update {
           local prev=$PWD;
           cd $flake_path;
-          sudo nix --experimental-features "nix-command flakes" flake update --commit-lock-file;
+          nix --experimental-features "nix-command flakes" flake update --commit-lock-file;
           cd $prev;
       }
 
       function nix-flake-metadata {
           local prev=$PWD;
           cd $flake_path;
-          sudo nix --experimental-features "nix-command flakes" flake metadata --json;
+          nix --experimental-features "nix-command flakes" flake metadata --json;
           cd $prev;
       }
 
@@ -131,7 +131,7 @@
               nix run nixpkgs\#git -- clone --depth 1 ''${input[1]} /tmp/''${input[0]};
               cd /tmp/''${input[0]};
               git reset --hard ''${input[2]};
-              sudo nix --experimental-features "nix-command flakes" run github:cargo2nix/cargo2nix -- -o -l -f ''${flake_path}/modules/crates/''${input[0]}.nix;
+              nix --experimental-features "nix-command flakes" run github:cargo2nix/cargo2nix -- -o -l -f ''${flake_path}/modules/crates/''${input[0]}.nix;
               rm -r /tmp/''${input[0]};
           done
       else
@@ -147,7 +147,7 @@
                   nix run nixpkgs\#git -- clone --depth 1 ''${input[1]} /tmp/''${input[0]};
                   cd /tmp/''${input[0]};
                   git reset --hard ''${input[2]};
-                  sudo nix --experimental-features "nix-command flakes" run github:cargo2nix/cargo2nix -- -o -l -f ''${flake_path}/modules/crates/''${input[0]}.nix;
+                  nix --experimental-features "nix-command flakes" run github:cargo2nix/cargo2nix -- -o -l -f ''${flake_path}/modules/crates/''${input[0]}.nix;
                   rm -r /tmp/''${input[0]};
               fi
           done
