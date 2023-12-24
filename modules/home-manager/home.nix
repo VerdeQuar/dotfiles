@@ -241,6 +241,23 @@
               vim.g.mapleader = ","
             '';
         }
+        {
+          plugin = git-conflict-nvim;
+          config =
+            fromLua
+            /*
+            lua
+            */
+            ''
+              require('git-conflict').setup({
+                highlights = {
+                  current = nil,
+                  incoming = nil,
+                  ancestor = nil,
+                },
+              })
+            '';
+        }
         hmts-nvim
         {
           plugin = fidget-nvim;
@@ -571,6 +588,13 @@
                   lsp_trouble = true,
                   symbols_outline = true,
                   which_key = true,
+                  custom_highlights = function(colors)
+                    return {
+                      GitConflictCurrentLabel = { bg = '#314C46' },
+                      GitConflictIncomingLabel = { bg = '#435A7D' },
+                      GitConflictAncestorLabel = { bg = '#62517A' },
+                    }
+                  end,
                   indent_blankline = {
                     colored_indent_levels = true,
                   },
