@@ -572,6 +572,17 @@
             '';
         }
         {
+          plugin = gitsigns-nvim;
+          config =
+            fromLua
+            /*
+            lua
+            */
+            ''
+              require('gitsigns').setup()
+            '';
+        }
+        {
           plugin = catppuccin-nvim;
           config =
             fromLua
@@ -584,6 +595,7 @@
                 flavour = "mocha",
                 integrations = {
                   neotree = true,
+                  gitsigns = true,
                   fidget = true,
                   lsp_trouble = true,
                   symbols_outline = true,
