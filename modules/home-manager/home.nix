@@ -1218,6 +1218,9 @@
       videos = "${config.home.homeDirectory}/videos";
     };
     configFile = {
+      "lutris/system.yml".source = (pkgs.formats.yaml {}).generate "system.yml" {
+        system.game_path = "${config.home.homeDirectory}/games";
+      };
       "sops/age/keys.txt" = lib.mkIf (builtins.pathExists ../sops/key.txt) {source = ../sops/key.txt;};
       "aniwall/config.json.initial".text = builtins.toJSON {
         set_wallpaper_command = "${pkgs.swww}/bin/swww img {} --transition-type center";
