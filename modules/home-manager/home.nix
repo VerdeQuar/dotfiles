@@ -89,7 +89,7 @@
       withVencord = true;
     })
     stable.youtube-music
-    wine64Packages.waylandFull
+    wineWowPackages.waylandFull
     lutris
     winetricks
     protonup-qt
