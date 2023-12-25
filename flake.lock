@@ -262,11 +262,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1703368619,
-        "narHash": "sha256-ZGPMYL7FMA6enhuwby961bBANmoFX14EA86m2/Jw5Jo=",
+        "lastModified": 1703527373,
+        "narHash": "sha256-AjypRssRtS6F3xkf7rE3/bXkIF2WJOZLbTIspjcE1zM=",
         "owner": "nix-community",
         "repo": "home-manager",
-        "rev": "a2523ea0343b056ba240abbac90ab5f116a7aa7b",
+        "rev": "80679ea5074ab7190c4cce478c600057cfb5edae",
         "type": "github"
       },
       "original": {
@@ -327,11 +327,11 @@
     },
     "nixpkgs-stable": {
       "locked": {
-        "lastModified": 1703034876,
-        "narHash": "sha256-4bMPFv/bs5g1nEsXQwXlrAGJgjv1Ilr0ejdaTkBwQLs=",
+        "lastModified": 1703351344,
+        "narHash": "sha256-9FEelzftkE9UaJ5nqxidaJJPEhe9TPhbypLHmc2Mysc=",
         "owner": "nixos",
         "repo": "nixpkgs",
-        "rev": "312ab59e8ade69e6083017bd9b98a2919f1fb86a",
+        "rev": "7790e078f8979a9fcd543f9a47427eeaba38f268",
         "type": "github"
       },
       "original": {
@@ -423,16 +423,32 @@
     },
     "nurpkgs": {
       "locked": {
-        "lastModified": 1703454138,
-        "narHash": "sha256-mbnYnp7SVMTJmDxmhDlInFbDFxIkvtwmi81AeUOOC98=",
+        "lastModified": 1703534601,
+        "narHash": "sha256-onlAWlQVrl4yOI4cZeYitPyvC9dty4Ljd75xbUfYBSg=",
         "owner": "nix-community",
         "repo": "NUR",
-        "rev": "ef0c4a7ef25cc6fd8be8bda4579a20fef020c467",
+        "rev": "c40028e57168bc70831ce85cb450b552e9ad5358",
         "type": "github"
       },
       "original": {
         "owner": "nix-community",
         "repo": "NUR",
+        "type": "github"
+      }
+    },
+    "philhk-vencord": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1703527642,
+        "narHash": "sha256-TqFRvKmyGII2T7b6AR3h+P0NKgog0BO7R0Mx3bqMktk=",
+        "owner": "philhk",
+        "repo": "Vencord",
+        "rev": "7660f316f89984cad6b2ecfa6937b386e691f7bb",
+        "type": "github"
+      },
+      "original": {
+        "owner": "philhk",
+        "repo": "Vencord",
         "type": "github"
       }
     },
@@ -450,6 +466,7 @@
         "nixpkgs": "nixpkgs_4",
         "nixpkgs-stable": "nixpkgs-stable",
         "nurpkgs": "nurpkgs",
+        "philhk-vencord": "philhk-vencord",
         "sops-nix": "sops-nix"
       }
     },
