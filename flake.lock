@@ -15,11 +15,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1703589606,
-        "narHash": "sha256-Wr8vh3nf6eHptB/KN2wEiwatW89BH/HNXcPy7vbjMk0=",
+        "lastModified": 1703608193,
+        "narHash": "sha256-f5iRXkc/UBsVfrucKXtHWpKQxbCNDuY3NcnKl5sIHCo=",
         "owner": "VerdeQuar",
         "repo": "aniwall",
-        "rev": "d847c50ed8440005ec4e0f8d48d7d1446fc1e474",
+        "rev": "ff70c7382c9bff6185cec3a54d99c2ffcbadc26a",
         "type": "github"
       },
       "original": {
@@ -423,11 +423,11 @@
     },
     "nurpkgs": {
       "locked": {
-        "lastModified": 1703596564,
-        "narHash": "sha256-zxhMagTSxf1A8gShPaQQ6ujanP61NcQJTS8IxT6bYJ0=",
+        "lastModified": 1703607157,
+        "narHash": "sha256-8YaMKIi5VOgu7/1tLofdaEUQ0LbvQjNHE5+Yh2zE99M=",
         "owner": "nix-community",
         "repo": "NUR",
-        "rev": "7a334094f8fa00eae621dc40c904754f5531bde2",
+        "rev": "167aa98c5d06c6cc5358c2a4abca5fb0bda44ec4",
         "type": "github"
       },
       "original": {
