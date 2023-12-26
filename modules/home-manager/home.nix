@@ -1042,6 +1042,7 @@
         ''${pkgs.xorg.xsetroot}/bin/xsetroot -xcf ${common.xcursor.theme.package}/share/icons/${common.xcursor.theme.name}/cursors/left_ptr ${toString common.xcursor.theme.size}''
         "${pkgs.xwaylandvideobridge}/bin/xwaylandvideobridge"
         "${pkgs.swww}/bin/swww-daemon"
+        "${pkgs.aniwall}/bin/aniwall set current"
         "waybar"
         "hyprctl dispatch workspace 3"
         "discord"
@@ -1053,8 +1054,8 @@
         "SUPERCONTROL, F, togglefloating, "
         "SUPER, F, fullscreen, "
         '', Print, exec, ${pkgs.dash}/bin/dash -c "${pkgs.grim}/bin/grim -g '$(${pkgs.slurp}/bin/slurp)' - | ${pkgs.wl-clipboard}/bin/wl-copy"''
-        ''SUPER, W, exec, ${pkgs.nushell}/bin/nu "${pkgs.aniwall}/bin/aniwall --width (${pkgs.hyprland}/bin/hyprctl monitors | parse --regex '(?P<width>\w+)x(?P<height>\w+)@' | get width) --height (${pkgs.hyprland}/bin/hyprctl monitors | parse --regex '(?P<width>\w+)x(?P<height>\w+)@' | get height) set random --category Liked --rating questionable"''
-        ''SUPERCONTROL, W, exec, ${pkgs.nushell}/bin/nu "${pkgs.aniwall}/bin/aniwall --width (${pkgs.hyprland}/bin/hyprctl monitors | parse --regex '(?P<width>\w+)x(?P<height>\w+)@' | get width) --height (${pkgs.hyprland}/bin/hyprctl monitors | parse --regex '(?P<width>\w+)x(?P<height>\w+)@' | get height) set previous"''
+        ''SUPER, W, exec, ${pkgs.aniwall}/bin/aniwall set random --category Liked''
+        ''SUPERCONTROL, W, exec, ${pkgs.aniwall}/bin/aniwall set previous''
 
         "SUPER,1,workspace,1"
         "SUPER,2,workspace,2"
@@ -1295,7 +1296,7 @@
       };
       "sops/age/keys.txt" = lib.mkIf (builtins.pathExists ../sops/key.txt) {source = ../sops/key.txt;};
       "aniwall/config.json.initial".text = builtins.toJSON {
-        set_wallpaper_command = "${pkgs.swww}/bin/swww img {} --transition-type center";
+        set_wallpaper_command = "${pkgs.swww}/bin/swww img {} --transition-type center --transition-fps 60 --transition-duration 1";
         wallpapers_dir = "${config.xdg.userDirs.pictures}/wallpapers";
       };
       "nixpkgs/config.nix".text = ''
