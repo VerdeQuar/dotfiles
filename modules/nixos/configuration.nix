@@ -86,6 +86,9 @@
       pulse.enable = true;
       jack.enable = true;
     };
+
+    dbus.enable = true;
+
     xserver = {
       enable = true;
       displayManager = {
@@ -122,6 +125,15 @@
       };
     };
   };
+
+  xdg.portal = {
+    enable = true;
+    extraPortals = [ 
+      pkgs.xdg-desktop-portal-hyprland
+      pkgs.xdg-desktop-portal-gtk 
+    ];
+  };
+
   hardware.bluetooth = {
     enable = true;
     powerOnBoot = true;
