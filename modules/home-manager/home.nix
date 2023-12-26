@@ -1141,9 +1141,12 @@
       ];
       decoration = {
         rounding = 5;
-        active_opacity = 0.99;
-        inactive_opacity = 0.97;
+        active_opacity = 0.95;
+        inactive_opacity = 0.93;
         fullscreen_opacity = 1.0;
+        blur = {
+          size = 4;
+        };
       };
     };
   };
