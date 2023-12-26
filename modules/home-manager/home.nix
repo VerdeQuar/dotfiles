@@ -85,6 +85,7 @@
     (pkgs.writeShellScriptBin "xdg-terminal-exec" ''
       exec kitty -e "$@"
     '')
+    xwaylandvideobridge
     (discord.override {
       withVencord = true;
     })
@@ -1038,6 +1039,7 @@
       exec-once = [
         "hyprctl setcursor ${common.xcursor.theme.name} ${toString common.xcursor.theme.size}"
         ''${pkgs.xorg.xsetroot}/bin/xsetroot -xcf ${common.xcursor.theme.package}/share/icons/${common.xcursor.theme.name}/cursors/left_ptr ${toString common.xcursor.theme.size}''
+        "${pkgs.xwaylandvideobridge}/bin/xwaylandvideobridge"
         "${pkgs.swww}/bin/swww-daemon"
         "waybar"
         "hyprctl dispatch workspace 3"
@@ -1093,6 +1095,12 @@
         "workspace 1 silent,^(discord)$"
         "workspace 2 silent,^(firefox)$"
         "workspace 10,^(YouTube Music)$"
+      ];
+      windowrulev2 = [
+        "opacity 0.0 override 0.0 override,class:^(xwaylandvideobridge)$"
+        "noanim,class:^(xwaylandvideobridge)$"
+        "nofocus,class:^(xwaylandvideobridge)$"
+        "noinitialfocus,class:^(xwaylandvideobridge)$"
       ];
       xwayland.force_zero_scaling = true;
       input = {
