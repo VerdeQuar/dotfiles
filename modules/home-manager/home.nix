@@ -89,6 +89,7 @@
     (discord.override {
       withVencord = true;
     })
+    vesktop
     stable.youtube-music
     wineWowPackages.waylandFull
     lutris
@@ -1093,6 +1094,7 @@
       ];
       windowrule = [
         "workspace 1 silent,^(discord)$"
+        "workspace 1 silent,^(VencordDesktop)$"
         "workspace 2 silent,^(firefox)$"
         "workspace 10,^(YouTube Music)$"
       ];
@@ -1262,7 +1264,7 @@
       templates = "${config.home.homeDirectory}/templates";
       videos = "${config.home.homeDirectory}/videos";
     };
-    configFile = {
+    configFile = rec {
       "lutris/system.yml".source = (pkgs.formats.yaml {}).generate "system.yml" {
         system.game_path = "${config.home.homeDirectory}/games";
       };
@@ -1457,14 +1459,14 @@
           width = 749;
         };
       };
-      # "VencordDesktop/VencordDesktop/settings.json.initial".text = builtins.toJSON {
-      #   splashTheming = true;
-      #   firstLaunch = false;
-      #   minimizeToTray = "on";
-      #   discordBranch = "stable";
-      #   arRPC = "on";
-      # };
-      # "VencordDesktop/VencordDesktop/settings/settings.json".text = builtins.toJSON {
+      "VencordDesktop/VencordDesktop/settings.json.initial".text = builtins.toJSON {
+        splashTheming = true;
+        firstLaunch = false;
+        minimizeToTray = "on";
+        discordBranch = "stable";
+        arRPC = "on";
+      };
+      "VencordDesktop/VencordDesktop/settings/settings.json.initial".source = config.xdg.configFile."Vencord/settings/settings.json.initial".source;
       "Vencord/settings/settings.json.initial".text = builtins.toJSON {
         themeLinks = [
           "https://catppuccin.github.io/discord/dist/catppuccin-mocha.theme.css"
