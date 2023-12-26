@@ -15,11 +15,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1702165096,
-        "narHash": "sha256-TsOmPlAkT8Sq1HE7XYquJIV8ZAKvMV2TMMmrnbK9Lmo=",
+        "lastModified": 1703502880,
+        "narHash": "sha256-0OLQ45+iuTui9TA8x+wHYupWDtckZBp8E9SdWqx+4xg=",
         "owner": "VerdeQuar",
         "repo": "aniwall",
-        "rev": "6f08a94fdfc0ca48d642c36565003efdbab81a56",
+        "rev": "d2af667bd9a87ad9d40961f02aad4d781135ec19",
         "type": "github"
       },
       "original": {
@@ -423,32 +423,16 @@
     },
     "nurpkgs": {
       "locked": {
-        "lastModified": 1703534601,
-        "narHash": "sha256-onlAWlQVrl4yOI4cZeYitPyvC9dty4Ljd75xbUfYBSg=",
+        "lastModified": 1703588046,
+        "narHash": "sha256-7nRAc13G1dgkbn+G/oR+7yQ4XmYTAvNhTbnxaB816dw=",
         "owner": "nix-community",
         "repo": "NUR",
-        "rev": "c40028e57168bc70831ce85cb450b552e9ad5358",
+        "rev": "cffd2441f3c43b9e02138ac35cebcc24497fd22e",
         "type": "github"
       },
       "original": {
         "owner": "nix-community",
         "repo": "NUR",
-        "type": "github"
-      }
-    },
-    "philhk-vencord": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1703527642,
-        "narHash": "sha256-TqFRvKmyGII2T7b6AR3h+P0NKgog0BO7R0Mx3bqMktk=",
-        "owner": "philhk",
-        "repo": "Vencord",
-        "rev": "7660f316f89984cad6b2ecfa6937b386e691f7bb",
-        "type": "github"
-      },
-      "original": {
-        "owner": "philhk",
-        "repo": "Vencord",
         "type": "github"
       }
     },
@@ -466,7 +450,6 @@
         "nixpkgs": "nixpkgs_4",
         "nixpkgs-stable": "nixpkgs-stable",
         "nurpkgs": "nurpkgs",
-        "philhk-vencord": "philhk-vencord",
         "sops-nix": "sops-nix"
       }
     },
