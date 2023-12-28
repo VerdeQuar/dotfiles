@@ -952,6 +952,11 @@
         push = {autoSetupRemote = true;};
         diff = {colorMoved = "default";};
         credential.helper = "${pkgs.git.override {withLibsecret = true;}}/bin/git-credential-libsecret";
+        url = {
+          "ssh://git@github.com/" = {
+            insteadOf = "https://github.com/";
+          };
+        };
       };
       aliases = {
         c = "commit";
