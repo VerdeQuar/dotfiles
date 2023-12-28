@@ -1045,13 +1045,14 @@
       exec-once = [
         "hyprctl setcursor ${common.xcursor.theme.name} ${toString common.xcursor.theme.size}"
         ''${pkgs.xorg.xsetroot}/bin/xsetroot -xcf ${common.xcursor.theme.package}/share/icons/${common.xcursor.theme.name}/cursors/left_ptr ${toString common.xcursor.theme.size}''
-        "${pkgs.xwaylandvideobridge}/bin/xwaylandvideobridge"
-        "${pkgs.swww}/bin/swww-daemon"
-        "${pkgs.aniwall}/bin/aniwall set current"
-        "waybar"
         "hyprctl dispatch workspace 3"
         "discord"
         "firefox"
+      ];
+      exec = [
+        "pgrep -f xwaylandvideobridge >/dev/null 2>&1 && ${pkgs.xwaylandvideobridge}/bin/xwaylandvideobridge"
+        "pgrep -f swww-daemon >/dev/null 2>&1 && ${pkgs.swww}/bin/swww-daemon"
+        "${pkgs.aniwall}/bin/aniwall set current"
       ];
       bind = [
         "SUPER, Q, killactive, "
