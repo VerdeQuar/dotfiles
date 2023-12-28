@@ -1110,6 +1110,8 @@
         "noanim,class:^(xwaylandvideobridge)$"
         "nofocus,class:^(xwaylandvideobridge)$"
         "noinitialfocus,class:^(xwaylandvideobridge)$"
+        "float,class:^(xwaylandvideobridge)$"
+        "pin,class:^(xwaylandvideobridge)$"
       ];
       xwayland.force_zero_scaling = true;
       input = {
