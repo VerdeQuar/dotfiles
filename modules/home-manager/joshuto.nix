@@ -36,9 +36,8 @@
   home.packages = [pkgs.glib];
   xdg.mimeApps.defaultApplications."inode/directory" = ["joshuto.desktop"];
   xdg.desktopEntries.joshuto = {
-    name = "joshuto";
-    noDisplay = true;
-    exec = "${pkgs.kitty}/bin/kitty -d %U ${config.programs.joshuto.package}/bin/joshuto";
+    name = "Joshuto";
+    exec = "${pkgs.kitty}/bin/kitty -d %U ${pkgs.joshuto}/bin/joshuto";
     terminal = true;
     mimeType = ["inode/directory"];
   };
