@@ -96,6 +96,7 @@
     winetricks
     protonup-qt
     steam
+    lm_sensors
     (pkgs.writeShellScriptBin "nixos-update" ''
       if test $# -eq 0; then
           if test -f $PWD/home.nix; then
