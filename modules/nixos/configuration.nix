@@ -128,9 +128,9 @@
 
   xdg.portal = {
     enable = true;
-    extraPortals = [ 
+    extraPortals = [
       pkgs.xdg-desktop-portal-hyprland
-      pkgs.xdg-desktop-portal-gtk 
+      pkgs.xdg-desktop-portal-gtk
     ];
   };
 
@@ -206,7 +206,7 @@
       ];
     };
   };
-  
+
   security.pam.loginLimits = [
     {
       domain = "@audio";
@@ -220,8 +220,18 @@
       type = "-";
       value = "unlimited";
     }
-    { domain = "@audio"; item = "nofile" ; type = "soft"; value = "99999"    ; }
-    { domain = "@audio"; item = "nofile" ; type = "hard"; value = "524288"    ; }
+    {
+      domain = "@audio";
+      item = "nofile";
+      type = "soft";
+      value = "99999";
+    }
+    {
+      domain = "@audio";
+      item = "nofile";
+      type = "hard";
+      value = "524288";
+    }
   ];
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions
