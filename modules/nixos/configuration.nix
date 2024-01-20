@@ -156,7 +156,7 @@
 
   users.users.verdek = {
     isNormalUser = true;
-    extraGroups = ["wheel"]; # Enable ‘sudo’ for the user.
+    extraGroups = ["wheel" "realtime" "audio"];
     shell = pkgs.nushell;
     hashedPasswordFile = lib.mkIf (builtins.hasAttr "user-password" config.sops.secrets) config.sops.secrets.user-password.path;
   };
@@ -167,10 +167,62 @@
     ];
     binsh = "${pkgs.dash}/bin/dash";
   };
-  programs.hyprland.enable = true;
-  programs.seahorse.enable = true;
-  programs.gamemode.enable = true;
 
+  programs = {
+    hyprland.enable = true;
+    seahorse.enable = true;
+    gamemode.enable = true;
+
+    gnupg.agent = {
+      enable = true;
+      pinentryFlavor = "gnome3";
+      enableSSHSupport = true;
+    };
+
+    nix-ld = {
+      enable = true;
+      libraries = with pkgs; [
+        zlib
+        zstd
+        stdenv.cc.cc
+        curl
+        openssl
+        attr
+        libssh
+        bzip2
+        libxml2
+        acl
+        libsodium
+        util-linux
+        xz
+        systemd
+        libGL
+        glibc
+        xorg.libXcursor
+        xorg.libXrandr
+        xorg.libXext
+        xorg.libX11
+        dbus.lib
+      ];
+    };
+  };
+  
+  security.pam.loginLimits = [
+    {
+      domain = "@audio";
+      item = "rtprio";
+      type = "-";
+      value = "99";
+    }
+    {
+      domain = "@audio";
+      item = "memlock";
+      type = "-";
+      value = "unlimited";
+    }
+    { domain = "@audio"; item = "nofile" ; type = "soft"; value = "99999"    ; }
+    { domain = "@audio"; item = "nofile" ; type = "hard"; value = "524288"    ; }
+  ];
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions
   # on your system were taken. It's perfectly fine and recommended to leave

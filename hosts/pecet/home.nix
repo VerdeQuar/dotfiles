@@ -14,4 +14,5 @@
       ];
     };
   };
+  services.easyeffects.preset = "Beyerdynamic DT 770 Pro";
 }

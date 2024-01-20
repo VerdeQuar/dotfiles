@@ -47,4 +47,39 @@
     vulkan-loader
     vulkan-validation-layers
   ];
+
+  networking.hostName = "pecet";
+
+  environment.etc = let
+    json = pkgs.formats.json {};
+    quantum = "768";
+  in {
+    "pipewire/pipewire.conf.d/92-low-latency.conf".text = ''
+      context.properties = {
+        default.clock.rate = 192000
+      }
+    '';
+    # default.clock.quantum = ${quantum}
+    # default.clock.min-quantum = ${quantum}
+    # default.clock.max-quantum = ${quantum}
+    # default.clock.allowed-rates = [ 192000 96000 48000 44100 ]
+    # "pipewire/pipewire-pulse.d/92-low-latency.conf".source = json.generate "92-low-latency.conf" {
+    #   context.modules = [
+    #     {
+    #       name = "libpipewire-module-protocol-pulse";
+    #       args = {
+    #         pulse.min.req = "${quantum}/192000";
+    #         pulse.default.req = "${quantum}/192000";
+    #         pulse.max.req = "${quantum}/192000";
+    #         pulse.min.quantum = "${quantum}/192000";
+    #         pulse.max.quantum = "${quantum}/192000";
+    #       };
+    #     }
+    #   ];
+    #   stream.properties = {
+    #     node.latency = "${quantum}/192000";
+    #     resample.quality = 1;
+    #   };
+    # };
+  };
 }
