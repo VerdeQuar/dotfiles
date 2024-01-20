@@ -1913,7 +1913,7 @@
         </fontconfig>
       '';
       "discord/settings.json".text = ''{ "DANGEROUS_ENABLE_DEVTOOLS_ONLY_ENABLE_IF_YOU_KNOW_WHAT_YOURE_DOING": true, "SKIP_HOST_UPDATE": true }'';
-      "qBittorrent/qBittorrent.conf".text = ''
+      "qBittorrent/qBittorrent.conf.initial".text = ''
         [BitTorrent]
         Session\GlobalMaxSeedingMinutes=0
       '';
