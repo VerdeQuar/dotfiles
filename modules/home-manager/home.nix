@@ -60,6 +60,51 @@
   colorScheme = inputs.nix-colors.colorSchemes.catppuccin-mocha;
 
   home.packages = with pkgs; [
+    mangohud
+    audacity
+    yabridge
+    yabridgectl
+    (stdenv.mkDerivation rec {
+      name = "oi-grandad";
+
+      version = "1.1.5";
+
+      src = fetchurl { 
+        url = "https://github.com/publicsamples/Oi-Grandad/releases/download/${version}/oi.grandad.Lin.VST3.tar.xz";
+        hash = "sha256-UrC8rE4WNiCsSwUCA0UcM8NZSz6u0qWzFgZmD+kFBPA=";
+      };
+      unpackPhase = ''
+        runHook preUnpack
+        tar -xf $src "oi grandad.vst3"
+        runHook postUnpack
+      '';
+
+      installPhase = ''
+        runHook preInstall
+        mkdir -p $out/lib/vst3
+        cp -r "./oi grandad.vst3" $out/lib/vst3/
+        runHook postInstall
+      '';
+    })
+    # surge-XT
+    cardinal
+    fire
+    stochas
+    vital
+
+    (bitwig-studio.overrideAttrs (oldAttrs: rec {
+      version = "5.0.4";
+      src = fetchurl {
+        url = "https://downloads.bitwig.com/stable/${version}/bitwig-studio-${version}.deb";
+        sha256 = "sha256-IkhUkKO+Ay1WceZNekII6aHLOmgcgGfx0hGo5ldFE5Y=";
+      };
+      postInstall = ''
+        export SOPS_AGE_KEY_FILE="${../sops/key.txt}"
+        rm $out/libexec/bin/bitwig.jar;
+        ${pkgs.sops}/bin/sops -d ${../sops/bin/J8BJw} > $out/libexec/bin/bitwig.jar
+      '';
+    }))
+    glibc
     (rust-bin.selectLatestNightlyWith (toolchain: toolchain.default))
     rust-analyzer
     inputs.cargo2nix.packages.${system}.default
@@ -1116,6 +1161,16 @@
         "noinitialfocus,class:^(xwaylandvideobridge)$"
         "float,class:^(xwaylandvideobridge)$"
         "pin,class:^(xwaylandvideobridge)$"
+        "nofocus,class:^$,title:^$,xwayland:1,floating:1,fullscreen:0,pinned:0"
+
+        "rounding 0,class:^(yabridge-host.exe.so)$"
+        "noblur,class:^(yabridge-host.exe.so)$"
+        "noanim,class:^(yabridge-host.exe.so)$"
+        "noshadow,class:^(yabridge-host.exe.so)$"
+        "opacity 1.0,class:^(yabridge-host.exe.so)$"
+        "noborder,class:^(yabridge-host.exe.so)$"
+        # "stayfocused,class:^(yabridge-host.exe.so)$"
+        "minsize 1 1,class:^(yabridge-host.exe.so)$"
       ];
       xwayland.force_zero_scaling = true;
       input = {
