@@ -601,7 +601,7 @@
                   gitsigns = true,
                   fidget = true,
                   lsp_trouble = true,
-                  symbols_outline = true,
+                  aerial = true,
                   which_key = true,
                   custom_highlights = function(colors)
                     return {
@@ -635,15 +635,16 @@
             '';
         }
         {
-          plugin = symbols-outline-nvim;
+          plugin = aerial-nvim;
           config =
             fromLua
             /*
             lua
             */
             ''
-              require("symbols-outline").setup({
-                auto_preview = true,
+              require("aerial").setup({
+                open_automatic = true,
+                autojump = true,
               })
             '';
         }
