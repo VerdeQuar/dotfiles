@@ -34,16 +34,17 @@
     driSupport32Bit = true;
   };
 
-  services.xserver.videoDrivers = ["amdgpu"];
-
-  networking.hostName = "pecet";
-
   hardware.opengl.extraPackages = with pkgs; [
+    rocmPackages.clr
     rocmPackages.clr.icd
-    amdvlk
   ];
 
-  hardware.opengl.extraPackages32 = with pkgs; [
-    driversi686Linux.amdvlk
+  services.xserver.videoDrivers = ["modesetting"];
+
+  environment.systemPackages = with pkgs; [
+    vulkan-tools
+    vulkan-headers
+    vulkan-loader
+    vulkan-validation-layers
   ];
 }
