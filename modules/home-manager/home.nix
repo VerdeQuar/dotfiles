@@ -1092,22 +1092,29 @@
     xwayland.enable = true;
     settings = {
       exec-once = [
-        "hyprctl setcursor ${common.xcursor.theme.name} ${toString common.xcursor.theme.size}"
-        ''${pkgs.xorg.xsetroot}/bin/xsetroot -xcf ${common.xcursor.theme.package}/share/icons/${common.xcursor.theme.name}/cursors/left_ptr ${toString common.xcursor.theme.size}''
-        "hyprctl dispatch workspace 3"
-        "discord"
-        "firefox"
+        "${pkgs.writeShellScript "hyprland-exec-once" ''
+          hyprctl setcursor ${common.xcursor.theme.name} ${toString common.xcursor.theme.size};
+          ${pkgs.xorg.xsetroot}/bin/xsetroot -xcf ${common.xcursor.theme.package}/share/icons/${common.xcursor.theme.name}/cursors/left_ptr ${toString common.xcursor.theme.size};
+          ${pkgs.xwaylandvideobridge}/bin/xwaylandvideobridge &
+          ${pkgs.swww}/bin/swww-daemon &
+          hyprctl dispatch workspace 3;
+          discord &
+          firefox &
+        ''}"
       ];
       exec = [
-        "pgrep -f xwaylandvideobridge >/dev/null 2>&1 && ${pkgs.xwaylandvideobridge}/bin/xwaylandvideobridge"
-        "pgrep -f swww-daemon >/dev/null 2>&1 && ${pkgs.swww}/bin/swww-daemon"
-        "${pkgs.aniwall}/bin/aniwall set current"
+        "${pkgs.writeShellScript "hyprland-exec" ''
+          ${pkgs.eww}/bin/eww close-all && ${pkgs.eww}/bin/eww open bar;
+          ${pkgs.aniwall}/bin/aniwall --set-wallpaper-command "${pkgs.swww}/bin/swww img -t none {}" set current;
+        ''}"
       ];
       bind = [
         "SUPER, Q, killactive, "
         "CONTROL, space, exec, kitty"
         "SUPERCONTROL, F, togglefloating, "
-        "SUPER, F, fullscreen, "
+        "SUPERCONTROL, F, resizeactive, exact 90% 90%"
+        "SUPERCONTROL, F, centerwindow"
+        "SUPER, F, fullscreen, 0"
         '', Print, exec, ${pkgs.dash}/bin/dash -c "${pkgs.grim}/bin/grim -g '$(${pkgs.slurp}/bin/slurp)' - | ${pkgs.wl-clipboard}/bin/wl-copy"''
         ''SUPER, W, exec, ${pkgs.aniwall}/bin/aniwall set random --category Liked''
         ''SUPERCONTROL, W, exec, ${pkgs.aniwall}/bin/aniwall set previous''
@@ -1191,7 +1198,9 @@
         workspace_swipe_direction_lock = false;
       };
       misc = {
+        disable_hyprland_logo = true;
         enable_swallow = true;
+        swallow_regex = "^(kitty)$";
         animate_manual_resizes = true;
         animate_mouse_windowdragging = true;
       };
@@ -1371,7 +1380,7 @@
       };
       "sops/age/keys.txt" = lib.mkIf (builtins.pathExists ../sops/key.txt) {source = ../sops/key.txt;};
       "aniwall/config.json.initial".text = builtins.toJSON {
-        set_wallpaper_command = "${pkgs.swww}/bin/swww img {} --transition-type center --transition-fps 60 --transition-duration 1";
+        set_wallpaper_command = "${pkgs.swww}/bin/swww img {} --transition-type any --transition-fps 60 --transition-duration 1";
         wallpapers_dir = "${config.xdg.userDirs.pictures}/wallpapers";
       };
       "nixpkgs/config.nix".text = ''
