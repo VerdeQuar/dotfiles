@@ -90,7 +90,7 @@
       withVencord = true;
     })
     vesktop
-    stable.youtube-music
+    youtube-music
     wineWowPackages.waylandFull
     lutris
     winetricks
