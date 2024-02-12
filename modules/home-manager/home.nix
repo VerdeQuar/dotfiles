@@ -125,7 +125,6 @@
     noto-fonts-monochrome-emoji
     noto-fonts-cjk-sans
     noto-fonts-cjk-serif
-    mpvScripts.uosc
     qbittorrent
     pavucontrol
     libnotify
@@ -804,6 +803,7 @@
         MBTN_RIGHT = "ignore";
         MBTN_LEFT = "cycle pause";
       };
+      scripts = [ pkgs.mpvScripts.uosc ];
     };
     feh = {
       enable = true;
