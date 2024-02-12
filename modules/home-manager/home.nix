@@ -756,43 +756,43 @@
     zathura = {
       enable = true;
       options = {
-        default-fg = "#${config.colorScheme.colors.base05}";
-        default-bg = "#${config.colorScheme.colors.base00}";
+        default-fg = "#${config.colorScheme.palette.base05}";
+        default-bg = "#${config.colorScheme.palette.base00}";
 
-        completion-bg = "#${config.colorScheme.colors.base02}";
-        completion-fg = "#${config.colorScheme.colors.base05}";
-        completion-highlight-bg = "#${config.colorScheme.colors.base03}";
-        completion-highlight-fg = "#${config.colorScheme.colors.base05}";
-        completion-group-bg = "#${config.colorScheme.colors.base02}";
-        completion-group-fg = "#${config.colorScheme.colors.base0D}";
+        completion-bg = "#${config.colorScheme.palette.base02}";
+        completion-fg = "#${config.colorScheme.palette.base05}";
+        completion-highlight-bg = "#${config.colorScheme.palette.base03}";
+        completion-highlight-fg = "#${config.colorScheme.palette.base05}";
+        completion-group-bg = "#${config.colorScheme.palette.base02}";
+        completion-group-fg = "#${config.colorScheme.palette.base0D}";
 
-        statusbar-fg = "#${config.colorScheme.colors.base05}";
-        statusbar-bg = "#${config.colorScheme.colors.base02}";
+        statusbar-fg = "#${config.colorScheme.palette.base05}";
+        statusbar-bg = "#${config.colorScheme.palette.base02}";
 
-        notification-bg = "#${config.colorScheme.colors.base02}";
-        notification-fg = "#${config.colorScheme.colors.base05}";
-        notification-error-bg = "#${config.colorScheme.colors.base02}";
-        notification-error-fg = "#${config.colorScheme.colors.base08}";
-        notification-warning-bg = "#${config.colorScheme.colors.base02}";
-        notification-warning-fg = "#${config.colorScheme.colors.base0A}";
+        notification-bg = "#${config.colorScheme.palette.base02}";
+        notification-fg = "#${config.colorScheme.palette.base05}";
+        notification-error-bg = "#${config.colorScheme.palette.base02}";
+        notification-error-fg = "#${config.colorScheme.palette.base08}";
+        notification-warning-bg = "#${config.colorScheme.palette.base02}";
+        notification-warning-fg = "#${config.colorScheme.palette.base0A}";
 
-        inputbar-fg = "#${config.colorScheme.colors.base05}";
-        inputbar-bg = "#${config.colorScheme.colors.base02}";
+        inputbar-fg = "#${config.colorScheme.palette.base05}";
+        inputbar-bg = "#${config.colorScheme.palette.base02}";
 
-        recolor-lightcolor = "#${config.colorScheme.colors.base00}";
-        recolor-darkcolor = "#${config.colorScheme.colors.base05}";
+        recolor-lightcolor = "#${config.colorScheme.palette.base00}";
+        recolor-darkcolor = "#${config.colorScheme.palette.base05}";
 
-        index-fg = "#${config.colorScheme.colors.base05}";
-        index-bg = "#${config.colorScheme.colors.base00}";
-        index-active-fg = "#${config.colorScheme.colors.base05}";
-        index-active-bg = "#${config.colorScheme.colors.base02}";
+        index-fg = "#${config.colorScheme.palette.base05}";
+        index-bg = "#${config.colorScheme.palette.base00}";
+        index-active-fg = "#${config.colorScheme.palette.base05}";
+        index-active-bg = "#${config.colorScheme.palette.base02}";
 
-        render-loading-bg = "#${config.colorScheme.colors.base00}";
-        render-loading-fg = "#${config.colorScheme.colors.base05}";
+        render-loading-bg = "#${config.colorScheme.palette.base00}";
+        render-loading-fg = "#${config.colorScheme.palette.base05}";
 
-        highlight-color = "#${config.colorScheme.colors.base03}";
-        highlight-fg = "#${config.colorScheme.colors.base09}";
-        highlight-active-color = "#${config.colorScheme.colors.base09}";
+        highlight-color = "#${config.colorScheme.palette.base03}";
+        highlight-fg = "#${config.colorScheme.palette.base09}";
+        highlight-active-color = "#${config.colorScheme.palette.base09}";
       };
     };
     mpv = {
@@ -941,7 +941,7 @@
               vi_normal: block
             }
           }
-          ${pkgs.coreutils}/bin/cat ${../quotes.dat} | split row % | shuffle | get 1 | ${pkgs.lolcrab}/bin/lolcrab --custom "${config.colorScheme.colors.base08}" "${config.colorScheme.colors.base09}" "${config.colorScheme.colors.base0A}" "${config.colorScheme.colors.base0B}" "${config.colorScheme.colors.base0C}" "${config.colorScheme.colors.base0D}" --scale 0.1
+          ${pkgs.coreutils}/bin/cat ${../quotes.dat} | split row % | shuffle | get 1 | ${pkgs.lolcrab}/bin/lolcrab --custom "${config.colorScheme.palette.base08}" "${config.colorScheme.palette.base09}" "${config.colorScheme.palette.base0A}" "${config.colorScheme.palette.base0B}" "${config.colorScheme.palette.base0C}" "${config.colorScheme.palette.base0D}" --scale 0.1
         '';
       shellAliases = let
         aliases = {
@@ -987,7 +987,7 @@
             line-numbers-minus-style = ''"#9C393A" bold'';
             map-styles = ''bold purple => syntax "#62517A", bold blue => syntax "#435A7D", bold cyan => syntax "#314C46", bold yellow => syntax "#635844"'';
             zero-style = ''syntax'';
-            whitespace-error-style = ''"#${config.colorScheme.colors.base05}"'';
+            whitespace-error-style = ''"#${config.colorScheme.palette.base05}"'';
           };
 
           features = "catppuccin";
@@ -1205,8 +1205,8 @@
 
         gaps_in = 5;
         gaps_out = 10;
-        "col.inactive_border" = "rgba(${config.colorScheme.colors.base00}cc) rgba(${config.colorScheme.colors.base04}ff) 45deg";
-        "col.active_border" = "rgba(${config.colorScheme.colors.base08}ff) rgba(${config.colorScheme.colors.base09}ff) rgba(${config.colorScheme.colors.base0A}ff) rgba(${config.colorScheme.colors.base0B}ff) rgba(${config.colorScheme.colors.base0C}ff) rgba(${config.colorScheme.colors.base0D}ff) 0deg";
+        "col.inactive_border" = "rgba(${config.colorScheme.palette.base00}cc) rgba(${config.colorScheme.palette.base04}ff) 45deg";
+        "col.active_border" = "rgba(${config.colorScheme.palette.base08}ff) rgba(${config.colorScheme.palette.base09}ff) rgba(${config.colorScheme.palette.base0A}ff) rgba(${config.colorScheme.palette.base0B}ff) rgba(${config.colorScheme.palette.base0C}ff) rgba(${config.colorScheme.palette.base0D}ff) 0deg";
       };
       bezier = "linear, 0.0, 0.0, 1.0, 1.0";
       animation = [
@@ -1332,13 +1332,13 @@
       font = "monospace 11";
       width = 400;
 
-      backgroundColor = "#${config.colorScheme.colors.base00}";
-      textColor = "#${config.colorScheme.colors.base05}";
-      borderColor = "#${config.colorScheme.colors.base06}";
-      progressColor = "over #${config.colorScheme.colors.base02}";
+      backgroundColor = "#${config.colorScheme.palette.base00}";
+      textColor = "#${config.colorScheme.palette.base05}";
+      borderColor = "#${config.colorScheme.palette.base06}";
+      progressColor = "over #${config.colorScheme.palette.base02}";
       extraConfig = ''
         [urgency=high]
-        border-color=#${config.colorScheme.colors.base09}
+        border-color=#${config.colorScheme.palette.base09}
       '';
 
       defaultTimeout = 5000;
