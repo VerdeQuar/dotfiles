@@ -54,6 +54,9 @@
       codeium_key = {
         path = "/run/user/1000/secrets/codeium_key";
       };
+      shirobot_token = {
+        path = "/run/user/1000/secrets/shirobot_token";
+      };
     };
   };
 
