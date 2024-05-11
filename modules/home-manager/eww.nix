@@ -114,7 +114,7 @@
                             :onhover "eww update reveal-date=true"
                             :onhoverlost "eww update reveal-date=false"
                             (button
-                                :onclick `nu -c 'eww (if (eww windows | grep calendar | str starts-with *) {"close"} else {"open"}) calendar'`
+                                :onclick `nu -c 'eww update reveal-date=false; eww (if (eww windows | grep calendar | str starts-with *) {"close"} else {"open"}) calendar'`
                                 (box :space-evenly false
                                     time
                                     (revealer :reveal reveal-date

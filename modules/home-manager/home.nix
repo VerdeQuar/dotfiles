@@ -10,8 +10,10 @@
   imports = [
     inputs.nix-colors.homeManagerModules.default
     inputs.sops-nix.homeManagerModules.sops
+    inputs.private.homeManagerModules.default
     ./joshuto.nix
     ./eww.nix
+    ./helix.nix
   ];
 
   home.username = "verdek";
@@ -37,11 +39,14 @@
     XDG_CONFIG_HOME = "${config.xdg.configHome}";
     SSH_AUTH_SOCK = "/run/user/1000/ssh-agent";
     BAT_THEME = "catppuccin";
-    NIX_LD = pkgs.stdenv.cc.bintools.dynamicLinker;
+    NIX_LD = "/run/current-system/sw/share/nix-ld/lib/ld.so";
+    NIX_LD_LIBRARY_PATH = "/run/current-system/sw/share/nix-ld/lib";
+    ANI_CLI_PLAYER = "${(pkgs.wrapMpv pkgs.mpv-unwrapped {scripts = config.programs.mpv.scripts;})}/bin/mpv";
   };
 
-  sops = lib.mkIf (builtins.pathExists ../sops/key.txt) {
-    age.keyFile = ../sops/key.txt;
+  # sops = lib.mkIf (builtins.pathExists ${config.xdg.configHome}/sops/age/keys.txt) {
+  sops = {
+    age.keyFile = "${config.xdg.configHome}/sops/age/keys.txt";
     age.generateKey = true;
     defaultSopsFile = ../sops/secrets.yaml;
     secrets = {
@@ -63,6 +68,23 @@
   colorScheme = inputs.nix-colors.colorSchemes.catppuccin-mocha;
 
   home.packages = with pkgs; [
+    logkeys
+    p7zip
+    unstable.r2modman
+    valgrind
+    ani-cli
+    sunshine
+    qpwgraph
+    aseprite
+    obs-studio
+    cudaPackages_11_1.cudatoolkit
+    poetry
+    python39
+    jetbrains.idea-community
+    jdk8
+    gradle_7
+    prismlauncher
+    blender
     mangohud
     audacity
     yabridge
@@ -95,22 +117,21 @@
     stochas
     vital
 
-    (bitwig-studio.overrideAttrs (oldAttrs: rec {
-      version = "5.0.4";
-      src = fetchurl {
-        url = "https://downloads.bitwig.com/stable/${version}/bitwig-studio-${version}.deb";
-        sha256 = "sha256-IkhUkKO+Ay1WceZNekII6aHLOmgcgGfx0hGo5ldFE5Y=";
-      };
-      postInstall = ''
-        export SOPS_AGE_KEY_FILE="${../sops/key.txt}"
-        rm $out/libexec/bin/bitwig.jar;
-        ${pkgs.sops}/bin/sops -d ${../sops/bin/J8BJw} > $out/libexec/bin/bitwig.jar
-      '';
-    }))
-    glibc
+    # (bitwig-studio.overrideAttrs (oldAttrs: rec {
+    #   version = "5.0.4";
+    #   src = fetchurl {
+    #     url = "https://downloads.bitwig.com/stable/${version}/bitwig-studio-${version}.deb";
+    #     sha256 = "sha256-IkhUkKO+Ay1WceZNekII6aHLOmgcgGfx0hGo5ldFE5Y=";
+    #   };
+    #   postInstall = ''
+    #     export SOPS_AGE_KEY_FILE="${config.sops.age.keyFile}";
+    #     rm $out/libexec/bin/bitwig.jar;
+    #     ${pkgs.sops}/bin/sops -d ${../sops/bin/J8BJw} > $out/libexec/bin/bitwig.jar
+    #   '';
+    # }))
+    swww
     (rust-bin.selectLatestNightlyWith (toolchain: toolchain.default))
     rust-analyzer
-    inputs.cargo2nix.packages.${system}.default
     inputs.aniwall.packages.${system}.default
     sops
     comma
@@ -138,7 +159,7 @@
       withVencord = true;
     })
     vesktop
-    youtube-music
+    # youtube-music
     wineWowPackages.waylandFull
     lutris
     winetricks
@@ -215,6 +236,26 @@
   };
 
   programs = {
+    zoxide = {
+      enable = true;
+      # enableNushellIntegration = true;
+    };
+    vscode = {
+      enable = true;
+      package = pkgs.vscodium;
+      extensions = with pkgs.vscode-extensions; [
+        asvetliakov.vscode-neovim
+        catppuccin.catppuccin-vsc
+        catppuccin.catppuccin-vsc-icons
+
+        rust-lang.rust-analyzer
+        ms-python.python
+        sumneko.lua
+
+        usernamehw.errorlens
+        mhutchie.git-graph
+      ];
+    };
     bat = {
       enable = true;
       themes = {
@@ -245,7 +286,7 @@
       viAlias = true;
       vimAlias = true;
       extraPackages = with pkgs; [
-        nixd
+        #nixd
       ];
       extraLuaConfig =
         /*
@@ -289,6 +330,7 @@
             lua
             */
             ''
+              vim.opt.termguicolors = true
               vim.g.mapleader = ","
             '';
         }
@@ -372,7 +414,7 @@
 
               require('lspconfig').lua_ls.setup({})
               require('lspconfig').tsserver.setup({})
-              require('lspconfig').nixd.setup({})
+              -- require('lspconfig').nixd.setup({})
             '';
         }
         {
@@ -641,7 +683,9 @@
             lua
             */
             ''
-              vim.cmd.colorscheme "catppuccin"
+              if not vim.g.vscode then
+                vim.cmd.colorscheme "catppuccin"
+              end
               require("catppuccin").setup({
                 flavour = "mocha",
                 integrations = {
@@ -735,6 +779,8 @@
             lua
             */
             ''
+              require('flash').setup({})
+
               vim.keymap.set({ "n", "x" }, "s", function() require("flash").jump() end, { desc = "Flash" })
               vim.keymap.set({ "n", "x" }, "S", function() require("flash").treesitter() end, { desc = "Flash Treesitter" })
               vim.keymap.set({ "o" }, "f", function() require("flash").jump() end, { desc = "Flash" })
@@ -803,7 +849,7 @@
         MBTN_RIGHT = "ignore";
         MBTN_LEFT = "cycle pause";
       };
-      scripts = [ pkgs.mpvScripts.uosc ];
+      scripts = [pkgs.mpvScripts.uosc];
     };
     feh = {
       enable = true;
@@ -837,6 +883,8 @@
           stylus
           ublock-origin
           youtube-shorts-block
+          return-youtube-dislikes
+          sponsorblock
         ];
 
         search.engines = {
@@ -881,7 +929,7 @@
           "Home Manage Options" = {
             urls = [
               {
-                template = "https://mipmip.github.io/home-manager-option-search";
+                template = "https://home-manager-options.extranix.com";
                 params = [
                   {
                     name = "query";
@@ -916,7 +964,6 @@
       enable = true;
       enableNushellIntegration = true;
     };
-
     joshuto = {
       enable = true;
     };
@@ -944,6 +991,31 @@
               vi_normal: block
             }
           }
+
+          if (not ($env | default false __zoxide_hooked | get __zoxide_hooked)) {
+            $env.__zoxide_hooked = true
+            $env.config = ($env | default {} config).config
+            $env.config = ($env.config | default {} hooks)
+            $env.config = ($env.config | update hooks ($env.config.hooks | default {} env_change))
+            $env.config = ($env.config | update hooks.env_change ($env.config.hooks.env_change | default [] PWD))
+            $env.config = ($env.config | update hooks.env_change.PWD ($env.config.hooks.env_change.PWD | append {|_, dir|
+              ${pkgs.zoxide}/bin/zoxide add -- $dir
+            }))
+          }
+
+          alias core-cd = cd
+
+          def --env cd [...rest:string] {
+            let arg0 = ($rest | append '~').0
+            let path = if ($arg0 == '-' or $arg0 == '~' or ($arg0 | path exists)) {
+              $arg0
+            } else {
+              (${pkgs.zoxide}/bin/zoxide query --interactive --exclude $env.PWD $arg0 | str trim -r -c "\n")
+
+            }
+            core-cd $path
+          }
+
           ${pkgs.coreutils}/bin/cat ${../quotes.dat} | split row % | shuffle | get 1 | ${pkgs.lolcrab}/bin/lolcrab --custom "${config.colorScheme.palette.base08}" "${config.colorScheme.palette.base09}" "${config.colorScheme.palette.base0A}" "${config.colorScheme.palette.base0B}" "${config.colorScheme.palette.base0C}" "${config.colorScheme.palette.base0D}" --scale 0.1
         '';
       shellAliases = let
@@ -952,13 +1024,14 @@
           cat = "${pkgs.bat}/bin/bat";
         };
       in
-        lib.attrsets.mapAttrs' (name: value: lib.attrsets.nameValuePair "'sudo ${name}'" ("sudo " + value)) aliases;
+        # (lib.attrsets.mapAttrs' (name: value: lib.attrsets.nameValuePair "'sudo ${name}'" ("sudo " + value)) aliases) //
+        aliases;
 
       # (pkgs.symlinkJoin {
       #   name = "youtube-music";
       #   paths = [stable.youtube-music];
       #   buildInputs = [pkgs.makeWrapper];
-      #   postBuild = ''
+      #   postBuild =core-cd''
       #     wrapProgram $out/bin/youtube-music \
       #       --add-flags "--enable-features=UseOzonePlatform --ozone-platform=wayland"
       #   '';
@@ -974,6 +1047,7 @@
       enable = true;
       userName = "VerdeQuar";
       userEmail = "verdequar@gmail.com";
+      lfs.enable = true;
       delta = {
         enable = true;
         options = {
@@ -1051,7 +1125,7 @@
       enable = true;
       package = pkgs.pass.withExtensions (exts: [
         exts.pass-otp
-        exts.pass-audit
+        # exts.pass-audit
         exts.pass-import
         exts.pass-update
       ]);
@@ -1094,16 +1168,19 @@
         "${pkgs.writeShellScript "hyprland-exec-once" ''
           hyprctl setcursor ${common.xcursor.theme.name} ${toString common.xcursor.theme.size};
           ${pkgs.xorg.xsetroot}/bin/xsetroot -xcf ${common.xcursor.theme.package}/share/icons/${common.xcursor.theme.name}/cursors/left_ptr ${toString common.xcursor.theme.size};
-          ${pkgs.xwaylandvideobridge}/bin/xwaylandvideobridge &
           ${pkgs.swww}/bin/swww-daemon &
           hyprctl dispatch workspace 3;
-          discord &
           firefox &
+          until discord
+          do
+            discord &
+            sleep 2;
+          done
         ''}"
       ];
       exec = [
         "${pkgs.writeShellScript "hyprland-exec" ''
-          ${pkgs.eww}/bin/eww close-all && ${pkgs.eww}/bin/eww open bar;
+          ${pkgs.eww}/bin/eww --restart close-all && ${pkgs.eww}/bin/eww open bar;
           ${pkgs.aniwall}/bin/aniwall --set-wallpaper-command "${pkgs.swww}/bin/swww img -t none {}" set current;
         ''}"
       ];
@@ -1228,6 +1305,18 @@
   };
 
   systemd.user.services = {
+    xwaylandvideobridge = {
+      Unit = {
+        Description = "xwaylandvideobridge";
+        After = ["default.target"];
+      };
+      Service = {
+        Type = "simple";
+        Restart = "always";
+        ExecStart = "${pkgs.xwaylandvideobridge}/bin/xwaylandvideobridge";
+      };
+      Install.WantedBy = ["default.target"];
+    };
     scan-known-hosts = {
       Unit = {
         Description = "scan known hosts";
@@ -1311,6 +1400,7 @@
     gpg-agent = {
       enable = true;
       pinentryFlavor = "gnome3";
+      # pinentryPackage = pkgs.pinentry-gnome3;
       enableSshSupport = true;
     };
     gammastep = {
@@ -1355,11 +1445,14 @@
   };
 
   xdg = {
-    mimeApps.defaultApplications = {
-      "text/plain" = ["codium.desktop"];
-      "application/pdf" = ["zathura.desktop"];
-      "video/*" = ["mpv.desktop"];
-      "image/*" = ["feh.desktop"];
+    mimeApps = {
+      enable = true;
+      defaultApplications = {
+        "text/plain" = ["codium.desktop"];
+        "application/pdf" = ["zathura.desktop"];
+        "video/*" = ["mpv.desktop"];
+        "image/*" = ["feh.desktop"];
+      };
     };
     userDirs = {
       enable = true;
@@ -1377,7 +1470,7 @@
       "lutris/system.yml".source = (pkgs.formats.yaml {}).generate "system.yml" {
         system.game_path = "${config.home.homeDirectory}/games";
       };
-      "sops/age/keys.txt" = lib.mkIf (builtins.pathExists ../sops/key.txt) {source = ../sops/key.txt;};
+      # "sops/age/keys.txt" = lib.mkIf (builtins.pathExists ../sops/key.txt) {source = ../sops/key.txt;};
       "aniwall/config.json.initial".text = builtins.toJSON {
         set_wallpaper_command = "${pkgs.swww}/bin/swww img {} --transition-type any --transition-fps 60 --transition-duration 1";
         wallpapers_dir = "${config.xdg.userDirs.pictures}/wallpapers";
@@ -1393,7 +1486,7 @@
           appVisible = true;
           autoResetAppCache = false;
           autoUpdates = true;
-          disableHardwareAcceleration = false;
+          disableHardwareAcceleration = true;
           hideMenu = false;
           proxy = "";
           restartOnConfigChanges = false;

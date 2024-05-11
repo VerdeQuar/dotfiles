@@ -2,22 +2,34 @@
   description = "Home Manager (dotfiles) and NixOS configuration";
 
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-23.11";
 
-    nixpkgs-stable.url = "github:nixos/nixpkgs/nixos-23.11";
+    nixpkgs-unstable.url = "github:nixos/nixpkgs/nixos-unstable";
 
     nurpkgs.url = "github:nix-community/NUR";
 
     home-manager = {
-      url = "github:nix-community/home-manager";
+      url = "github:nix-community/home-manager/release-23.11";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    sops-nix.url = "github:Mic92/sops-nix";
+    sops-nix = {
+      url = "github:Mic92/sops-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
-    cargo2nix.url = "github:cargo2nix/cargo2nix";
+    private = {
+      url = "github:VerdeQuar/empty-flake";
+    };
 
-    nix-colors.url = "github:Misterio77/nix-colors";
+    cargo2nix = {
+      url = "github:cargo2nix/cargo2nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    nix-colors = {
+      url = "github:Misterio77/nix-colors";
+    };
 
     catppuccin-youtubemusic = {
       url = "github:catppuccin/youtubemusic";
@@ -39,18 +51,25 @@
       flake = false;
     };
 
-    codeium-nvim.url = "github:Exafunction/codeium.nvim";
+    codeium-nvim = {
+      url = "github:Exafunction/codeium.nvim";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
-    aniwall.url = "github:VerdeQuar/aniwall";
+    aniwall = {
+      url = "github:VerdeQuar/aniwall";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = {
     self,
     nixpkgs,
-    nixpkgs-stable,
+    nixpkgs-unstable,
     nurpkgs,
     home-manager,
     sops-nix,
+    private,
     cargo2nix,
     aniwall,
     codeium-nvim,
@@ -64,7 +83,17 @@
       };
       overlays = [
         (final: prev: {
-          stable = import nixpkgs-stable {
+          python3 = prev.python3.override {
+            packageOverrides = pfinal: pprev: {
+              debugpy = pprev.debugpy.overrideAttrs (oldAttrs: {
+                pytestCheckPhase = "true";
+              });
+            };
+          };
+          python3Packages = final.python3.pkgs;
+        })
+        (final: prev: {
+          unstable = import nixpkgs-unstable {
             inherit system;
             config.allowUnfree = true;
           };
@@ -109,6 +138,7 @@
 
     nixosConfigurations = {
       lapek = nixpkgs.lib.nixosSystem {
+        inherit system;
         inherit pkgs;
         specialArgs = {inherit system inputs common;};
         modules = [
@@ -116,6 +146,7 @@
         ];
       };
       pecet = nixpkgs.lib.nixosSystem {
+        inherit system;
         inherit pkgs;
         specialArgs = {inherit system inputs common;};
         modules = [
