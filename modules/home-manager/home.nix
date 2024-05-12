@@ -72,7 +72,7 @@
     p7zip
     unstable.r2modman
     valgrind
-    ani-cli
+    unstable.ani-cli
     sunshine
     qpwgraph
     aseprite
