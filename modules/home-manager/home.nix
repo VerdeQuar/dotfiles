@@ -68,7 +68,6 @@
   colorScheme = inputs.nix-colors.colorSchemes.catppuccin-mocha;
 
   home.packages = with pkgs; [
-    logkeys
     p7zip
     unstable.r2modman
     valgrind
@@ -130,8 +129,8 @@
     #   '';
     # }))
     swww
-    (rust-bin.selectLatestNightlyWith (toolchain: toolchain.default))
-    rust-analyzer
+    # (rust-bin.selectLatestNightlyWith (toolchain: toolchain.default))
+    # rust-analyzer
     inputs.aniwall.packages.${system}.default
     sops
     comma
@@ -1072,6 +1071,9 @@
         };
       };
       extraConfig = {
+        rerere = {
+          enabled = true;
+        };
         commit.gpgsigh = true;
         push = {autoSetupRemote = true;};
         diff = {colorMoved = "default";};
