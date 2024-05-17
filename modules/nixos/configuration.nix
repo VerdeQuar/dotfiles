@@ -248,12 +248,21 @@
 
   security.polkit.enable = true;
 
-  sops = lib.mkIf (builtins.pathExists ../sops/key.txt) {
-    age.keyFile = /home/verdek/.system/modules/sops/key.txt;
+  sops = {
+    age.keyFile = "/home/verdek/.config/sops/age/keys.txt";
     age.generateKey = true;
     defaultSopsFile = ../sops/secrets.yaml;
     secrets.user_password.neededForUsers = true;
     secrets.nix_access_tokens.neededForUsers = true;
+
+    secrets = {
+      id_ed25519 = {
+        path = "/root/.ssh/id_ed25519";
+      };
+      id_ed25519_pub = {
+        path = "/root/.ssh/id_ed25519.pub";
+      };
+    };
   };
 
   users.users.verdek = {
