@@ -68,6 +68,10 @@
   colorScheme = inputs.nix-colors.colorSchemes.catppuccin-mocha;
 
   home.packages = with pkgs; [
+    dotnet-runtime_7
+    google-chrome
+    unstable.obsidian
+    unstable.fcast-receiver
     p7zip
     unstable.r2modman
     valgrind
@@ -162,6 +166,7 @@
     wineWowPackages.waylandFull
     lutris
     winetricks
+    protontricks
     protonup-qt
     steam
     lm_sensors
